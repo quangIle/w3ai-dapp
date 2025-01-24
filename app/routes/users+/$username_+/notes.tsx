@@ -1,10 +1,10 @@
 import { invariantResponse } from '@epic-web/invariant'
 import { Link, NavLink, Outlet } from 'react-router'
 
-import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
+import { GeneralErrorBoundary } from '#app/components/error-boundary'
+import { Icon } from '#app/components/ui/icon'
 import { prisma } from '#app/utils/db.server.ts'
-import { cn, getUserImgSrc } from '#app/utils/misc.tsx'
+import { cn, getUserImgSrc } from '#app/utils/misc'
 import { useOptionalUser } from '#app/utils/user.ts'
 import { type Route } from './+types/notes.ts'
 

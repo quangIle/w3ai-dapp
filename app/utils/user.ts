@@ -1,6 +1,6 @@
 import { useRouteLoaderData } from 'react-router'
 
-import { type loader as rootLoader } from '#app/root.tsx'
+import { type loader as rootLoader } from '#app/root'
 
 function isUser(user: any): user is Awaited<ReturnType<typeof rootLoader>>['data']['user'] {
 	return user && typeof user === 'object' && typeof user.id === 'string'

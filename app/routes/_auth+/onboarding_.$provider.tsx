@@ -4,19 +4,19 @@ import { data, Form, redirect, useSearchParams, type Params } from 'react-router
 import { safeRedirect } from 'remix-utils/safe-redirect'
 import { z } from 'zod'
 
-import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
-import { Spacer } from '#app/components/spacer.tsx'
-import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { CheckboxField, ErrorList, Field } from '#app/components/forms'
+import { Spacer } from '#app/components/spacer'
+import { StatusButton } from '#app/components/ui/status-button'
 import {
 	authenticator,
 	requireAnonymous,
 	sessionKey,
 	signupWithConnection,
 } from '#app/utils/auth.server.ts'
+import { ProviderNameSchema } from '#app/utils/connections'
 import { connectionSessionStorage } from '#app/utils/connections.server'
-import { ProviderNameSchema } from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
-import { useIsPending } from '#app/utils/misc.tsx'
+import { useIsPending } from '#app/utils/misc'
 import { authSessionStorage } from '#app/utils/session.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { NameSchema, UsernameSchema } from '#app/utils/user-validation.ts'

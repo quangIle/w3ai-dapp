@@ -3,8 +3,8 @@ import {
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-} from '#app/components/ui/tooltip.tsx'
-import { cn } from '#app/utils/misc.tsx'
+} from '#app/components/ui/tooltip'
+import { cn } from '#app/utils/misc'
 import { type Route } from './+types/index.ts'
 import { logos } from './logos/logos.ts'
 

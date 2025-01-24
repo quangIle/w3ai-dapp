@@ -7,8 +7,8 @@
 
 import { Link, useLocation } from 'react-router'
 
-import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
+import { GeneralErrorBoundary } from '#app/components/error-boundary'
+import { Icon } from '#app/components/ui/icon'
 
 export function loader() {
 	throw new Response('Not found', { status: 404 })

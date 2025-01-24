@@ -1,6 +1,6 @@
 import { createCookieSessionStorage } from 'react-router'
 
-import { type ProviderName } from './connections.tsx'
+import { type ProviderName } from './connections'
 import { GitHubProvider } from './providers/github.server.ts'
 import { type AuthProvider } from './providers/provider.ts'
 import { type Timings } from './timing.server.ts'

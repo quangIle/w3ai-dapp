@@ -4,17 +4,17 @@ import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import { data, Form, Link, redirect } from 'react-router'
 import { z } from 'zod'
 
-import { ErrorList, Field } from '#app/components/forms.tsx'
-import { Button } from '#app/components/ui/button.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
-import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { ErrorList, Field } from '#app/components/forms'
+import { Button } from '#app/components/ui/button'
+import { Icon } from '#app/components/ui/icon'
+import { StatusButton } from '#app/components/ui/status-button'
 import { getPasswordHash, requireUserId, verifyUserPassword } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { useIsPending } from '#app/utils/misc.tsx'
+import { useIsPending } from '#app/utils/misc'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { PasswordSchema } from '#app/utils/user-validation.ts'
 import { type Route } from './+types/profile.password.ts'
-import { type BreadcrumbHandle } from './profile.tsx'
+import { type BreadcrumbHandle } from './profile'
 
 export const handle: BreadcrumbHandle & SEOHandle = {
 	breadcrumb: <Icon name="dots-horizontal">Password</Icon>,

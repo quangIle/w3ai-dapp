@@ -1,9 +1,9 @@
 import { Form } from 'react-router'
 import { z } from 'zod'
 
-import { Icon } from '#app/components/ui/icon.tsx'
-import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { useIsPending } from './misc.tsx'
+import { Icon } from '#app/components/ui/icon'
+import { StatusButton } from '#app/components/ui/status-button'
+import { useIsPending } from './misc'
 
 export const GITHUB_PROVIDER_NAME = 'github'
 // to add another provider, set their name here and add it to the providerNames below

@@ -1,10 +1,10 @@
 import { redirect } from 'react-router'
 
 import { authenticator, getSessionExpirationDate, getUserId } from '#app/utils/auth.server.ts'
-import { providerLabels, ProviderNameSchema } from '#app/utils/connections.tsx'
+import { providerLabels, ProviderNameSchema } from '#app/utils/connections'
 import { prisma } from '#app/utils/db.server.ts'
 import { ensurePrimary } from '#app/utils/litefs.server.ts'
-import { combineHeaders } from '#app/utils/misc.tsx'
+import { combineHeaders } from '#app/utils/misc'
 import { normalizeEmail, normalizeUsername } from '#app/utils/providers/provider.ts'
 import {
 	destroyRedirectToHeader,
@@ -14,8 +14,8 @@ import { createToastHeaders, redirectWithToast } from '#app/utils/toast.server.t
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { type Route } from './+types/auth.$provider.callback.ts'
 import { handleNewSession } from './login.server.ts'
-import { prefilledProfileKey, providerIdKey } from './onboarding_.$provider.tsx'
-import { onboardingEmailSessionKey } from './onboarding.tsx'
+import { onboardingEmailSessionKey } from './onboarding'
+import { prefilledProfileKey, providerIdKey } from './onboarding_.$provider'
 
 const destroyRedirectTo = { 'set-cookie': destroyRedirectToHeader }
 

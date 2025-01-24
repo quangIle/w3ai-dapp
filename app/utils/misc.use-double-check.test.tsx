@@ -6,7 +6,7 @@ import { userEvent } from '@testing-library/user-event'
 import { useState } from 'react'
 import { expect, test } from 'vitest'
 
-import { useDoubleCheck } from './misc.tsx'
+import { useDoubleCheck } from './misc'
 
 function TestComponent() {
 	const [defaultPrevented, setDefaultPrevented] = useState<'idle' | 'no' | 'yes'>('idle')

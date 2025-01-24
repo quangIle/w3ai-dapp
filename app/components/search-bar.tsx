@@ -1,11 +1,11 @@
 import { useId } from 'react'
 import { Form, useSearchParams, useSubmit } from 'react-router'
 
-import { useDebounce, useIsPending } from '#app/utils/misc.tsx'
-import { Icon } from './ui/icon.tsx'
-import { Input } from './ui/input.tsx'
-import { Label } from './ui/label.tsx'
-import { StatusButton } from './ui/status-button.tsx'
+import { useDebounce, useIsPending } from '#app/utils/misc'
+import { Icon } from './ui/icon'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+import { StatusButton } from './ui/status-button'
 
 export function SearchBar({
 	status,

@@ -6,7 +6,7 @@ import { safeRedirect } from 'remix-utils/safe-redirect'
 
 import { connectionSessionStorage, providers } from './connections.server.ts'
 import { prisma } from './db.server.ts'
-import { combineHeaders, downloadFile } from './misc.tsx'
+import { combineHeaders, downloadFile } from './misc'
 import { type ProviderUser } from './providers/provider.ts'
 import { authSessionStorage } from './session.server.ts'
 

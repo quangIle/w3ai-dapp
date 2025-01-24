@@ -7,16 +7,16 @@ import { useState } from 'react'
 import { data, Form, redirect, useNavigation } from 'react-router'
 import { z } from 'zod'
 
-import { ErrorList } from '#app/components/forms.tsx'
-import { Button } from '#app/components/ui/button.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
-import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { ErrorList } from '#app/components/forms'
+import { Button } from '#app/components/ui/button'
+import { Icon } from '#app/components/ui/icon'
+import { StatusButton } from '#app/components/ui/status-button'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { uploadHandler } from '#app/utils/file-uploads.server.ts'
-import { getUserImgSrc, useDoubleCheck, useIsPending } from '#app/utils/misc.tsx'
+import { getUserImgSrc, useDoubleCheck, useIsPending } from '#app/utils/misc'
 import { type Route } from './+types/profile.photo.ts'
-import { type BreadcrumbHandle } from './profile.tsx'
+import { type BreadcrumbHandle } from './profile'
 
 export const handle: BreadcrumbHandle & SEOHandle = {
 	breadcrumb: <Icon name="avatar">Photo</Icon>,

@@ -3,29 +3,29 @@ import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import { useState } from 'react'
 import { data, useFetcher } from 'react-router'
 
-import { Icon } from '#app/components/ui/icon.tsx'
-import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { Icon } from '#app/components/ui/icon'
+import { StatusButton } from '#app/components/ui/status-button'
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-} from '#app/components/ui/tooltip.tsx'
+} from '#app/components/ui/tooltip'
 import { requireUserId } from '#app/utils/auth.server.ts'
-import { resolveConnectionData } from '#app/utils/connections.server.ts'
 import {
 	ProviderConnectionForm,
 	providerIcons,
 	providerNames,
 	ProviderNameSchema,
 	type ProviderName,
-} from '#app/utils/connections.tsx'
+} from '#app/utils/connections'
+import { resolveConnectionData } from '#app/utils/connections.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { pipeHeaders } from '#app/utils/headers.server.js'
 import { makeTimings } from '#app/utils/timing.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 import { type Info, type Route } from './+types/profile.connections.ts'
-import { type BreadcrumbHandle } from './profile.tsx'
+import { type BreadcrumbHandle } from './profile'
 
 export const handle: BreadcrumbHandle & SEOHandle = {
 	breadcrumb: <Icon name="link-2">Connections</Icon>,

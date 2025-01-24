@@ -1,12 +1,12 @@
 import { invariantResponse } from '@epic-web/invariant'
 import { Form, Link, useLoaderData, type LoaderFunctionArgs } from 'react-router'
 
-import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { Spacer } from '#app/components/spacer.tsx'
-import { Button } from '#app/components/ui/button.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
+import { GeneralErrorBoundary } from '#app/components/error-boundary'
+import { Spacer } from '#app/components/spacer'
+import { Button } from '#app/components/ui/button'
+import { Icon } from '#app/components/ui/icon'
 import { prisma } from '#app/utils/db.server.ts'
-import { getUserImgSrc } from '#app/utils/misc.tsx'
+import { getUserImgSrc } from '#app/utils/misc'
 import { useOptionalUser } from '#app/utils/user.ts'
 import { type Route } from './+types/$username.ts'
 

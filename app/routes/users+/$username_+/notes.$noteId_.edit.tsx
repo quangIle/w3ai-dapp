@@ -1,12 +1,12 @@
 import { invariantResponse } from '@epic-web/invariant'
 
-import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { GeneralErrorBoundary } from '#app/components/error-boundary'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { NoteEditor } from './__note-editor.tsx'
+import { NoteEditor } from './__note-editor'
 import { type Route } from './+types/notes.$noteId_.edit.ts'
 
-export { action } from './__note-editor.server.tsx'
+export { action } from './__note-editor.server'
 
 export async function loader({ params, request }: Route.LoaderArgs) {
 	const userId = await requireUserId(request)

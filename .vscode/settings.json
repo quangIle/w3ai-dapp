@@ -10,5 +10,8 @@
 	],
 	"workbench.editorAssociations": {
 		"*.db": "sqlite-viewer.view"
-	}
+	},
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"typescript.preferences.importModuleSpecifierEnding": "minimal",
+	"javascript.preferences.importModuleSpecifierEnding": "minimal"
 }

@@ -1,11 +1,11 @@
 import { data, Link, redirect } from 'react-router'
 import { z } from 'zod'
 
-import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { ErrorList } from '#app/components/forms.tsx'
-import { SearchBar } from '#app/components/search-bar.tsx'
+import { GeneralErrorBoundary } from '#app/components/error-boundary'
+import { ErrorList } from '#app/components/forms'
+import { SearchBar } from '#app/components/search-bar'
 import { prisma } from '#app/utils/db.server.ts'
-import { cn, getUserImgSrc, useDelayedIsPending } from '#app/utils/misc.tsx'
+import { cn, getUserImgSrc, useDelayedIsPending } from '#app/utils/misc'
 import { type Route } from './+types/index.ts'
 
 const UserSearchResultSchema = z.object({
