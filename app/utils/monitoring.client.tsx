@@ -1,11 +1,6 @@
 import * as Sentry from '@sentry/react'
 import React from 'react'
-import {
-	createRoutesFromChildren,
-	matchRoutes,
-	useLocation,
-	useNavigationType,
-} from 'react-router'
+import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from 'react-router'
 
 export function init() {
 	Sentry.init({
@@ -14,10 +9,7 @@ export function init() {
 		beforeSend(event) {
 			if (event.request?.url) {
 				const url = new URL(event.request.url)
-				if (
-					url.protocol === 'chrome-extension:' ||
-					url.protocol === 'moz-extension:'
-				) {
+				if (url.protocol === 'chrome-extension:' || url.protocol === 'moz-extension:') {
 					// This error is from a browser extension, ignore it
 					return null
 				}

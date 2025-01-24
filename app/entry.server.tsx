@@ -1,16 +1,16 @@
 import { PassThrough } from 'node:stream'
 import { createReadableStreamFromReadable } from '@react-router/node'
-
 import * as Sentry from '@sentry/node'
 import chalk from 'chalk'
 import { isbot } from 'isbot'
 import { renderToPipeableStream } from 'react-dom/server'
 import {
 	ServerRouter,
-	type LoaderFunctionArgs,
 	type ActionFunctionArgs,
 	type HandleDocumentRequestFunction,
+	type LoaderFunctionArgs,
 } from 'react-router'
+
 import { getEnv, init } from './utils/env.server.ts'
 import { getInstanceInfo } from './utils/litefs.server.ts'
 import { NonceProvider } from './utils/nonce-provider.ts'
@@ -24,13 +24,7 @@ global.ENV = getEnv()
 type DocRequestArgs = Parameters<HandleDocumentRequestFunction>
 
 export default async function handleRequest(...args: DocRequestArgs) {
-	const [
-		request,
-		responseStatusCode,
-		responseHeaders,
-		reactRouterContext,
-		loadContext,
-	] = args
+	const [request, responseStatusCode, responseHeaders, reactRouterContext, loadContext] = args
 	const { currentInstance, primaryInstance } = await getInstanceInfo()
 	responseHeaders.set('fly-region', process.env.FLY_REGION ?? 'unknown')
 	responseHeaders.set('fly-app', process.env.FLY_APP_NAME ?? 'unknown')
@@ -41,9 +35,7 @@ export default async function handleRequest(...args: DocRequestArgs) {
 		responseHeaders.append('Document-Policy', 'js-profiling')
 	}
 
-	const callbackName = isbot(request.headers.get('user-agent'))
-		? 'onAllReady'
-		: 'onShellReady'
+	const callbackName = isbot(request.headers.get('user-agent')) ? 'onAllReady' : 'onShellReady'
 
 	const nonce = loadContext.cspNonce?.toString() ?? ''
 	return new Promise(async (resolve, reject) => {
@@ -54,11 +46,7 @@ export default async function handleRequest(...args: DocRequestArgs) {
 
 		const { pipe, abort } = renderToPipeableStream(
 			<NonceProvider value={nonce}>
-				<ServerRouter
-					nonce={nonce}
-					context={reactRouterContext}
-					url={request.url}
-				/>
+				<ServerRouter nonce={nonce} context={reactRouterContext} url={request.url} />
 			</NonceProvider>,
 			{
 				[callbackName]: () => {

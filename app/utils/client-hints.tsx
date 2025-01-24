@@ -10,6 +10,7 @@ import {
 import { clientHint as timeZoneHint } from '@epic-web/client-hints/time-zone'
 import * as React from 'react'
 import { useRevalidator } from 'react-router'
+
 import { useOptionalRequestInfo, useRequestInfo } from './request-info.ts'
 
 const hintsUtils = getHintUtils({
@@ -40,10 +41,7 @@ export function useOptionalHints() {
  */
 export function ClientHintCheck({ nonce }: { nonce: string }) {
 	const { revalidate } = useRevalidator()
-	React.useEffect(
-		() => subscribeToSchemeChange(() => revalidate()),
-		[revalidate],
-	)
+	React.useEffect(() => subscribeToSchemeChange(() => revalidate()), [revalidate])
 
 	return (
 		<script

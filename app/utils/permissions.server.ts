@@ -1,12 +1,10 @@
 import { data } from 'react-router'
+
 import { requireUserId } from './auth.server.ts'
 import { prisma } from './db.server.ts'
-import { type PermissionString, parsePermissionString } from './user.ts'
+import { parsePermissionString, type PermissionString } from './user.ts'
 
-export async function requireUserWithPermission(
-	request: Request,
-	permission: PermissionString,
-) {
+export async function requireUserWithPermission(request: Request, permission: PermissionString) {
 	const userId = await requireUserId(request)
 	const permissionData = parsePermissionString(permission)
 	const user = await prisma.user.findFirst({
@@ -18,9 +16,7 @@ export async function requireUserWithPermission(
 					permissions: {
 						some: {
 							...permissionData,
-							access: permissionData.access
-								? { in: permissionData.access }
-								: undefined,
+							access: permissionData.access ? { in: permissionData.access } : undefined,
 						},
 					},
 				},

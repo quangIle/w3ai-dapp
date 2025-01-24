@@ -2,9 +2,10 @@ import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import * as E from '@react-email/components'
-import { data, redirect, Link, useFetcher } from 'react-router'
+import { data, Link, redirect, useFetcher } from 'react-router'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
@@ -30,10 +31,7 @@ export async function action({ request }: Route.ActionArgs) {
 		schema: ForgotPasswordSchema.superRefine(async (data, ctx) => {
 			const user = await prisma.user.findFirst({
 				where: {
-					OR: [
-						{ email: data.usernameOrEmail },
-						{ username: data.usernameOrEmail },
-					],
+					OR: [{ email: data.usernameOrEmail }, { username: data.usernameOrEmail }],
 				},
 				select: { id: true },
 			})
@@ -71,9 +69,7 @@ export async function action({ request }: Route.ActionArgs) {
 	const response = await sendEmail({
 		to: user.email,
 		subject: `Epic Notes Password Reset`,
-		react: (
-			<ForgotPasswordEmail onboardingUrl={verifyUrl.toString()} otp={otp} />
-		),
+		react: <ForgotPasswordEmail onboardingUrl={verifyUrl.toString()} otp={otp} />,
 	})
 
 	if (response.status === 'success') {
@@ -86,13 +82,7 @@ export async function action({ request }: Route.ActionArgs) {
 	}
 }
 
-function ForgotPasswordEmail({
-	onboardingUrl,
-	otp,
-}: {
-	onboardingUrl: string
-	otp: string
-}) {
+function ForgotPasswordEmail({ onboardingUrl, otp }: { onboardingUrl: string; otp: string }) {
 	return (
 		<E.Html lang="en" dir="ltr">
 			<E.Container>
@@ -160,11 +150,7 @@ export default function ForgotPasswordRoute() {
 						<div className="mt-6">
 							<StatusButton
 								className="w-full"
-								status={
-									forgotPassword.state === 'submitting'
-										? 'pending'
-										: (form.status ?? 'idle')
-								}
+								status={forgotPassword.state === 'submitting' ? 'pending' : (form.status ?? 'idle')}
 								type="submit"
 								disabled={forgotPassword.state !== 'idle'}
 							>
@@ -172,10 +158,7 @@ export default function ForgotPasswordRoute() {
 							</StatusButton>
 						</div>
 					</forgotPassword.Form>
-					<Link
-						to="/login"
-						className="mt-11 text-center text-body-sm font-bold"
-					>
+					<Link to="/login" className="mt-11 text-center text-body-sm font-bold">
 						Back to Login
 					</Link>
 				</div>

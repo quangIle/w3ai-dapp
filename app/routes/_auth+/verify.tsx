@@ -4,6 +4,7 @@ import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import { Form, useSearchParams } from 'react-router'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList, OTPField } from '#app/components/forms.tsx'
 import { Spacer } from '#app/components/spacer.tsx'
@@ -41,9 +42,7 @@ export async function action({ request }: Route.ActionArgs) {
 export default function VerifyRoute({ actionData }: Route.ComponentProps) {
 	const [searchParams] = useSearchParams()
 	const isPending = useIsPending()
-	const parseWithZoddType = VerificationTypeSchema.safeParse(
-		searchParams.get(typeQueryParam),
-	)
+	const parseWithZoddType = VerificationTypeSchema.safeParse(searchParams.get(typeQueryParam))
 	const type = parseWithZoddType.success ? parseWithZoddType.data : null
 
 	const checkEmail = (
@@ -86,9 +85,7 @@ export default function VerifyRoute({ actionData }: Route.ComponentProps) {
 
 	return (
 		<main className="container flex flex-col justify-center pb-32 pt-20">
-			<div className="text-center">
-				{type ? headings[type] : 'Invalid Verification Type'}
-			</div>
+			<div className="text-center">{type ? headings[type] : 'Invalid Verification Type'}</div>
 
 			<Spacer size="xs" />
 
@@ -113,12 +110,8 @@ export default function VerifyRoute({ actionData }: Route.ComponentProps) {
 								errors={fields[codeQueryParam].errors}
 							/>
 						</div>
-						<input
-							{...getInputProps(fields[typeQueryParam], { type: 'hidden' })}
-						/>
-						<input
-							{...getInputProps(fields[targetQueryParam], { type: 'hidden' })}
-						/>
+						<input {...getInputProps(fields[typeQueryParam], { type: 'hidden' })} />
+						<input {...getInputProps(fields[targetQueryParam], { type: 'hidden' })} />
 						<input
 							{...getInputProps(fields[redirectToQueryParam], {
 								type: 'hidden',

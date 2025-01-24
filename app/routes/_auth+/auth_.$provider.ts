@@ -1,4 +1,5 @@
 import { redirect } from 'react-router'
+
 import { authenticator } from '#app/utils/auth.server.ts'
 import { handleMockAction } from '#app/utils/connections.server.ts'
 import { ProviderNameSchema } from '#app/utils/connections.tsx'
@@ -21,9 +22,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 			const formData = await request.formData()
 			const rawRedirectTo = formData.get('redirectTo')
 			const redirectTo =
-				typeof rawRedirectTo === 'string'
-					? rawRedirectTo
-					: getReferrerRoute(request)
+				typeof rawRedirectTo === 'string' ? rawRedirectTo : getReferrerRoute(request)
 			const redirectToCookie = getRedirectCookieHeader(redirectTo)
 			if (redirectToCookie) {
 				error.headers.append('set-cookie', redirectToCookie)

@@ -1,7 +1,8 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
-import { data, redirect, Form, Link } from 'react-router'
+import { data, Form, Link, redirect } from 'react-router'
+
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
@@ -72,9 +73,7 @@ export async function action({ request }: Route.ActionArgs) {
 	return redirect(`/settings/profile`, { status: 302 })
 }
 
-export default function CreatePasswordRoute({
-	actionData,
-}: Route.ComponentProps) {
+export default function CreatePasswordRoute({ actionData }: Route.ComponentProps) {
 	const isPending = useIsPending()
 
 	const [form, fields] = useForm({
@@ -112,10 +111,7 @@ export default function CreatePasswordRoute({
 				<Button variant="secondary" asChild>
 					<Link to="..">Cancel</Link>
 				</Button>
-				<StatusButton
-					type="submit"
-					status={isPending ? 'pending' : (form.status ?? 'idle')}
-				>
+				<StatusButton type="submit" status={isPending ? 'pending' : (form.status ?? 'idle')}>
 					Create Password
 				</StatusButton>
 			</div>

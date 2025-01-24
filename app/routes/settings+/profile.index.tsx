@@ -4,6 +4,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import { data, Link, useFetcher } from 'react-router'
 import { z } from 'zod'
+
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
@@ -14,7 +15,7 @@ import { getUserImgSrc, useDoubleCheck } from '#app/utils/misc.tsx'
 import { authSessionStorage } from '#app/utils/session.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { NameSchema, UsernameSchema } from '#app/utils/user-validation.ts'
-import { type Route, type Info } from './+types/profile.index.ts'
+import { type Info, type Route } from './+types/profile.index.ts'
 import { twoFAVerificationType } from './profile.two-factor.tsx'
 
 export const handle: SEOHandle = {
@@ -128,9 +129,7 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 			<div className="col-span-full flex flex-col gap-6">
 				<div>
 					<Link to="change-email">
-						<Icon name="envelope-closed">
-							Change email from {loaderData.user.email}
-						</Icon>
+						<Icon name="envelope-closed">Change email from {loaderData.user.email}</Icon>
 					</Link>
 				</div>
 				<div>
@@ -254,9 +253,7 @@ function UpdateProfile({ loaderData }: { loaderData: Info['loaderData'] }) {
 					size="wide"
 					name="intent"
 					value={profileUpdateActionIntent}
-					status={
-						fetcher.state !== 'idle' ? 'pending' : (form.status ?? 'idle')
-					}
+					status={fetcher.state !== 'idle' ? 'pending' : (form.status ?? 'idle')}
 				>
 					Save changes
 				</StatusButton>
@@ -266,14 +263,9 @@ function UpdateProfile({ loaderData }: { loaderData: Info['loaderData'] }) {
 }
 
 async function signOutOfSessionsAction({ request, userId }: ProfileActionArgs) {
-	const authSession = await authSessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
+	const authSession = await authSessionStorage.getSession(request.headers.get('cookie'))
 	const sessionId = authSession.get(sessionKey)
-	invariantResponse(
-		sessionId,
-		'You must be authenticated to sign out of other sessions',
-	)
+	invariantResponse(sessionId, 'You must be authenticated to sign out of other sessions')
 	await prisma.session.deleteMany({
 		where: {
 			userId,
@@ -283,11 +275,7 @@ async function signOutOfSessionsAction({ request, userId }: ProfileActionArgs) {
 	return { status: 'success' } as const
 }
 
-function SignOutOfSessions({
-	loaderData: loaderData,
-}: {
-	loaderData: Info['loaderData']
-}) {
+function SignOutOfSessions({ loaderData: loaderData }: { loaderData: Info['loaderData'] }) {
 	const dc = useDoubleCheck()
 
 	const fetcher = useFetcher<typeof signOutOfSessionsAction>()
@@ -303,11 +291,7 @@ function SignOutOfSessions({
 							value: signOutOfSessionsActionIntent,
 						})}
 						variant={dc.doubleCheck ? 'destructive' : 'default'}
-						status={
-							fetcher.state !== 'idle'
-								? 'pending'
-								: (fetcher.data?.status ?? 'idle')
-						}
+						status={fetcher.state !== 'idle' ? 'pending' : (fetcher.data?.status ?? 'idle')}
 					>
 						<Icon name="avatar">
 							{dc.doubleCheck
@@ -348,9 +332,7 @@ function DeleteData() {
 					variant={dc.doubleCheck ? 'destructive' : 'default'}
 					status={fetcher.state !== 'idle' ? 'pending' : 'idle'}
 				>
-					<Icon name="trash">
-						{dc.doubleCheck ? `Are you sure?` : `Delete all your data`}
-					</Icon>
+					<Icon name="trash">{dc.doubleCheck ? `Are you sure?` : `Delete all your data`}</Icon>
 				</StatusButton>
 			</fetcher.Form>
 		</div>

@@ -4,15 +4,13 @@ import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import { data, Form, Link, useSearchParams } from 'react-router'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
 import { Spacer } from '#app/components/spacer.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { login, requireAnonymous } from '#app/utils/auth.server.ts'
-import {
-	ProviderConnectionForm,
-	providerNames,
-} from '#app/utils/connections.tsx'
+import { ProviderConnectionForm, providerNames } from '#app/utils/connections.tsx'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts'
@@ -96,9 +94,7 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
 			<div className="mx-auto w-full max-w-md">
 				<div className="flex flex-col gap-3 text-center">
 					<h1 className="text-h1">Welcome back!</h1>
-					<p className="text-body-md text-muted-foreground">
-						Please enter your details.
-					</p>
+					<p className="text-body-md text-muted-foreground">Please enter your details.</p>
 				</div>
 				<Spacer size="xs" />
 
@@ -140,18 +136,13 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
 									errors={fields.remember.errors}
 								/>
 								<div>
-									<Link
-										to="/forgot-password"
-										className="text-body-xs font-semibold"
-									>
+									<Link to="/forgot-password" className="text-body-xs font-semibold">
 										Forgot password?
 									</Link>
 								</div>
 							</div>
 
-							<input
-								{...getInputProps(fields.redirectTo, { type: 'hidden' })}
-							/>
+							<input {...getInputProps(fields.redirectTo, { type: 'hidden' })} />
 							<ErrorList errors={form.errors} id={form.errorId} />
 
 							<div className="flex items-center justify-between gap-6 pt-3">
@@ -178,13 +169,7 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
 						</ul>
 						<div className="flex items-center justify-center gap-2 pt-6">
 							<span className="text-muted-foreground">New here?</span>
-							<Link
-								to={
-									redirectTo
-										? `/signup?${encodeURIComponent(redirectTo)}`
-										: '/signup'
-								}
-							>
+							<Link to={redirectTo ? `/signup?${encodeURIComponent(redirectTo)}` : '/signup'}>
 								Create an account
 							</Link>
 						</div>

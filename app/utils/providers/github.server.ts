@@ -2,10 +2,11 @@ import { createId as cuid } from '@paralleldrive/cuid2'
 import { redirect } from 'react-router'
 import { GitHubStrategy } from 'remix-auth-github'
 import { z } from 'zod'
+
 import { cache, cachified } from '../cache.server.ts'
 import { connectionSessionStorage } from '../connections.server.ts'
 import { type Timings } from '../timing.server.ts'
-import { MOCK_CODE_GITHUB_HEADER, MOCK_CODE_GITHUB } from './constants.ts'
+import { MOCK_CODE_GITHUB, MOCK_CODE_GITHUB_HEADER } from './constants.ts'
 import { type AuthProvider } from './provider.ts'
 
 const GitHubUserSchema = z.object({ login: z.string() })
@@ -21,8 +22,7 @@ const GitHubUserParseResult = z
 	)
 
 const shouldMock =
-	process.env.GITHUB_CLIENT_ID?.startsWith('MOCK_') ||
-	process.env.NODE_ENV === 'test'
+	process.env.GITHUB_CLIENT_ID?.startsWith('MOCK_') || process.env.NODE_ENV === 'test'
 
 export class GitHubProvider implements AuthProvider {
 	getAuthStrategy() {
@@ -50,10 +50,7 @@ export class GitHubProvider implements AuthProvider {
 		)
 	}
 
-	async resolveConnectionData(
-		providerId: string,
-		{ timings }: { timings?: Timings } = {},
-	) {
+	async resolveConnectionData(providerId: string, { timings }: { timings?: Timings } = {}) {
 		const result = await cachified({
 			key: `connection-data:github:${providerId}`,
 			cache,
@@ -61,10 +58,9 @@ export class GitHubProvider implements AuthProvider {
 			ttl: 1000 * 60,
 			swr: 1000 * 60 * 60 * 24 * 7,
 			async getFreshValue(context) {
-				const response = await fetch(
-					`https://api.github.com/user/${providerId}`,
-					{ headers: { Authorization: `token ${process.env.GITHUB_TOKEN}` } },
-				)
+				const response = await fetch(`https://api.github.com/user/${providerId}`, {
+					headers: { Authorization: `token ${process.env.GITHUB_TOKEN}` },
+				})
 				const rawJson = await response.json()
 				const result = GitHubUserSchema.safeParse(rawJson)
 				if (!result.success) {
@@ -93,13 +89,11 @@ export class GitHubProvider implements AuthProvider {
 
 		// allows us to inject a code when running e2e tests,
 		// but falls back to a pre-defined 🐨 constant
-		const code =
-			request.headers.get(MOCK_CODE_GITHUB_HEADER) || MOCK_CODE_GITHUB
+		const code = request.headers.get(MOCK_CODE_GITHUB_HEADER) || MOCK_CODE_GITHUB
 		const searchParams = new URLSearchParams({ code, state })
 		throw redirect(`/auth/github/callback?${searchParams}`, {
 			headers: {
-				'set-cookie':
-					await connectionSessionStorage.commitSession(connectionSession),
+				'set-cookie': await connectionSessionStorage.commitSession(connectionSession),
 			},
 		})
 	}

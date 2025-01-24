@@ -1,9 +1,8 @@
 import { useRouteLoaderData } from 'react-router'
+
 import { type loader as rootLoader } from '#app/root.tsx'
 
-function isUser(
-	user: any,
-): user is Awaited<ReturnType<typeof rootLoader>>['data']['user'] {
+function isUser(user: any): user is Awaited<ReturnType<typeof rootLoader>>['data']['user'] {
 	return user && typeof user === 'object' && typeof user.id === 'string'
 }
 
@@ -28,9 +27,7 @@ export function useUser() {
 type Action = 'create' | 'read' | 'update' | 'delete'
 type Entity = 'user' | 'note'
 type Access = 'own' | 'any' | 'own,any' | 'any,own'
-export type PermissionString =
-	| `${Action}:${Entity}`
-	| `${Action}:${Entity}:${Access}`
+export type PermissionString = `${Action}:${Entity}` | `${Action}:${Entity}:${Access}`
 
 export function parsePermissionString(permissionString: PermissionString) {
 	const [action, entity, access] = permissionString.split(':') as [
@@ -61,10 +58,7 @@ export function userHasPermission(
 	)
 }
 
-export function userHasRole(
-	user: Pick<ReturnType<typeof useUser>, 'roles'> | null,
-	role: string,
-) {
+export function userHasRole(user: Pick<ReturnType<typeof useUser>, 'roles'> | null, role: string) {
 	if (!user) return false
 	return user.roles.some((r) => r.name === role)
 }

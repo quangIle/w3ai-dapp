@@ -4,6 +4,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import { formatDistanceToNow } from 'date-fns'
 import { data, Form, Link } from 'react-router'
 import { z } from 'zod'
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { floatingToolbarClassName } from '#app/components/floating-toolbar.tsx'
 import { ErrorList } from '#app/components/forms.tsx'
@@ -15,8 +16,8 @@ import { prisma } from '#app/utils/db.server.ts'
 import { getNoteImgSrc, useIsPending } from '#app/utils/misc.tsx'
 import { requireUserWithPermission } from '#app/utils/permissions.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
-import { userHasPermission, useOptionalUser } from '#app/utils/user.ts'
-import { type Route, type Info } from './+types/notes.$noteId.ts'
+import { useOptionalUser, userHasPermission } from '#app/utils/user.ts'
+import { type Info, type Route } from './+types/notes.$noteId.ts'
 import { type Info as notesInfo } from './+types/notes.ts'
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -72,10 +73,7 @@ export async function action({ request }: Route.ActionArgs) {
 	invariantResponse(note, 'Not found', { status: 404 })
 
 	const isOwner = note.ownerId === userId
-	await requireUserWithPermission(
-		request,
-		isOwner ? `delete:note:own` : `delete:note:any`,
-	)
+	await requireUserWithPermission(request, isOwner ? `delete:note:own` : `delete:note:any`)
 
 	await prisma.note.delete({ where: { id: note.id } })
 
@@ -86,16 +84,10 @@ export async function action({ request }: Route.ActionArgs) {
 	})
 }
 
-export default function NoteRoute({
-	loaderData,
-	actionData,
-}: Route.ComponentProps) {
+export default function NoteRoute({ loaderData, actionData }: Route.ComponentProps) {
 	const user = useOptionalUser()
 	const isOwner = user?.id === loaderData.note.ownerId
-	const canDelete = userHasPermission(
-		user,
-		isOwner ? `delete:note:own` : `delete:note:any`,
-	)
+	const canDelete = userHasPermission(user, isOwner ? `delete:note:own` : `delete:note:any`)
 	const displayBar = canDelete || isOwner
 
 	return (
@@ -115,9 +107,7 @@ export default function NoteRoute({
 						</li>
 					))}
 				</ul>
-				<p className="whitespace-break-spaces text-sm md:text-lg">
-					{loaderData.note.content}
-				</p>
+				<p className="whitespace-break-spaces text-sm md:text-lg">{loaderData.note.content}</p>
 			</div>
 			{displayBar ? (
 				<div className={floatingToolbarClassName}>
@@ -127,13 +117,8 @@ export default function NoteRoute({
 						</Icon>
 					</span>
 					<div className="grid flex-1 grid-cols-2 justify-end gap-2 min-[525px]:flex md:gap-4">
-						{canDelete ? (
-							<DeleteNote id={loaderData.note.id} actionData={actionData} />
-						) : null}
-						<Button
-							asChild
-							className="min-[525px]:max-md:aspect-square min-[525px]:max-md:px-0"
-						>
+						{canDelete ? <DeleteNote id={loaderData.note.id} actionData={actionData} /> : null}
+						<Button asChild className="min-[525px]:max-md:aspect-square min-[525px]:max-md:px-0">
 							<Link to="edit">
 								<Icon name="pencil-1" className="scale-125 max-md:scale-150">
 									<span className="max-md:hidden">Edit</span>
@@ -182,16 +167,14 @@ export function DeleteNote({
 }
 
 export const meta: Route.MetaFunction = ({ data, params, matches }) => {
-	const notesMatch = matches.find(
-		(m) => m?.id === 'routes/users+/$username_+/notes',
-	) as { data: notesInfo['loaderData'] } | undefined
+	const notesMatch = matches.find((m) => m?.id === 'routes/users+/$username_+/notes') as
+		| { data: notesInfo['loaderData'] }
+		| undefined
 
 	const displayName = notesMatch?.data?.owner.name ?? params.username
 	const noteTitle = data?.note.title ?? 'Note'
 	const noteContentsSummary =
-		data && data.note.content.length > 100
-			? data?.note.content.slice(0, 97) + '...'
-			: 'No content'
+		data && data.note.content.length > 100 ? data?.note.content.slice(0, 97) + '...' : 'No content'
 	return [
 		{ title: `${noteTitle} | ${displayName}'s Notes | Epic Notes` },
 		{
@@ -206,9 +189,7 @@ export function ErrorBoundary() {
 		<GeneralErrorBoundary
 			statusHandlers={{
 				403: () => <p>You are not allowed to do that</p>,
-				404: ({ params }) => (
-					<p>No note with the id "{params.noteId}" exists</p>
-				),
+				404: ({ params }) => <p>No note with the id "{params.noteId}" exists</p>,
 			}}
 		/>
 	)

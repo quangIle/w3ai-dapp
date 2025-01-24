@@ -1,15 +1,13 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
-import { data, redirect, Form } from 'react-router'
+import { data, Form, redirect } from 'react-router'
 import { z } from 'zod'
+
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import {
-	prepareVerification,
-	requireRecentVerification,
-} from '#app/routes/_auth+/verify.server.ts'
+import { prepareVerification, requireRecentVerification } from '#app/routes/_auth+/verify.server.ts'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { sendEmail } from '#app/utils/email.server.ts'
@@ -99,10 +97,7 @@ export async function action({ request }: Route.ActionArgs) {
 	}
 }
 
-export default function ChangeEmailIndex({
-	loaderData,
-	actionData,
-}: Route.ComponentProps) {
+export default function ChangeEmailIndex({ loaderData, actionData }: Route.ComponentProps) {
 	const [form, fields] = useForm({
 		id: 'change-email-form',
 		constraint: getZodConstraint(ChangeEmailSchema),
@@ -117,10 +112,7 @@ export default function ChangeEmailIndex({
 		<div>
 			<h1 className="text-h1">Change Email</h1>
 			<p>You will receive an email at the new email address to confirm.</p>
-			<p>
-				An email notice will also be sent to your old address{' '}
-				{loaderData.user.email}.
-			</p>
+			<p>An email notice will also be sent to your old address {loaderData.user.email}.</p>
 			<div className="mx-auto mt-5 max-w-sm">
 				<Form method="POST" {...getFormProps(form)}>
 					<Field
@@ -133,9 +125,7 @@ export default function ChangeEmailIndex({
 					/>
 					<ErrorList id={form.errorId} errors={form.errors} />
 					<div>
-						<StatusButton
-							status={isPending ? 'pending' : (form.status ?? 'idle')}
-						>
+						<StatusButton status={isPending ? 'pending' : (form.status ?? 'idle')}>
 							Send Confirmation
 						</StatusButton>
 					</div>

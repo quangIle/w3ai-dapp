@@ -2,8 +2,9 @@ import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import * as QRCode from 'qrcode'
-import { data, redirect, Form, useNavigation } from 'react-router'
+import { data, Form, redirect, useNavigation } from 'react-router'
 import { z } from 'zod'
+
 import { ErrorList, OTPField } from '#app/components/forms.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
@@ -28,10 +29,7 @@ const VerifySchema = z.object({
 	code: z.string().min(6).max(6),
 })
 
-const ActionSchema = z.discriminatedUnion('intent', [
-	CancelSchema,
-	VerifySchema,
-])
+const ActionSchema = z.discriminatedUnion('intent', [CancelSchema, VerifySchema])
 
 export const twoFAVerifyVerificationType = '2fa-verify'
 
@@ -123,10 +121,7 @@ export async function action({ request }: Route.ActionArgs) {
 	}
 }
 
-export default function TwoFactorRoute({
-	loaderData,
-	actionData,
-}: Route.ComponentProps) {
+export default function TwoFactorRoute({ loaderData, actionData }: Route.ComponentProps) {
 	const navigation = useNavigation()
 
 	const isPending = useIsPending()
@@ -148,22 +143,18 @@ export default function TwoFactorRoute({
 				<img alt="qr code" src={loaderData.qrCode} className="h-56 w-56" />
 				<p>Scan this QR code with your authenticator app.</p>
 				<p className="text-sm">
-					If you cannot scan the QR code, you can manually add this account to
-					your authenticator app using this code:
+					If you cannot scan the QR code, you can manually add this account to your authenticator
+					app using this code:
 				</p>
 				<div className="p-3">
-					<pre
-						className="whitespace-pre-wrap break-all text-sm"
-						aria-label="One-time Password URI"
-					>
+					<pre className="whitespace-pre-wrap break-all text-sm" aria-label="One-time Password URI">
 						{loaderData.otpUri}
 					</pre>
 				</div>
 				<p className="text-sm">
-					Once you've added the account, enter the code from your authenticator
-					app below. Once you enable 2FA, you will need to enter a code from
-					your authenticator app every time you log in or perform important
-					actions. Do not lose access to your authenticator app, or you will
+					Once you've added the account, enter the code from your authenticator app below. Once you
+					enable 2FA, you will need to enter a code from your authenticator app every time you log
+					in or perform important actions. Do not lose access to your authenticator app, or you will
 					lose access to your account.
 				</p>
 				<div className="flex w-full max-w-xs flex-col justify-center gap-4">

@@ -2,6 +2,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import { Link, Outlet, useMatches } from 'react-router'
 import { z } from 'zod'
+
 import { Spacer } from '#app/components/spacer.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
@@ -52,10 +53,7 @@ export default function EditUserProfile() {
 			<div className="container">
 				<ul className="flex gap-3">
 					<li>
-						<Link
-							className="text-muted-foreground"
-							to={`/users/${user.username}`}
-						>
+						<Link className="text-muted-foreground" to={`/users/${user.username}`}>
 							Profile
 						</Link>
 					</li>

@@ -1,17 +1,14 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
-import { data, redirect, Form, Link } from 'react-router'
+import { data, Form, Link, redirect } from 'react-router'
 import { z } from 'zod'
+
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import {
-	getPasswordHash,
-	requireUserId,
-	verifyUserPassword,
-} from '#app/utils/auth.server.ts'
+import { getPasswordHash, requireUserId, verifyUserPassword } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
@@ -62,20 +59,18 @@ export async function action({ request }: Route.ActionArgs) {
 	const formData = await request.formData()
 	const submission = await parseWithZod(formData, {
 		async: true,
-		schema: ChangePasswordForm.superRefine(
-			async ({ currentPassword, newPassword }, ctx) => {
-				if (currentPassword && newPassword) {
-					const user = await verifyUserPassword({ id: userId }, currentPassword)
-					if (!user) {
-						ctx.addIssue({
-							path: ['currentPassword'],
-							code: z.ZodIssueCode.custom,
-							message: 'Incorrect password.',
-						})
-					}
+		schema: ChangePasswordForm.superRefine(async ({ currentPassword, newPassword }, ctx) => {
+			if (currentPassword && newPassword) {
+				const user = await verifyUserPassword({ id: userId }, currentPassword)
+				if (!user) {
+					ctx.addIssue({
+						path: ['currentPassword'],
+						code: z.ZodIssueCode.custom,
+						message: 'Incorrect password.',
+					})
 				}
-			},
-		),
+			}
+		}),
 	})
 	if (submission.status !== 'success') {
 		return data(
@@ -113,9 +108,7 @@ export async function action({ request }: Route.ActionArgs) {
 	)
 }
 
-export default function ChangePasswordRoute({
-	actionData,
-}: Route.ComponentProps) {
+export default function ChangePasswordRoute({ actionData }: Route.ComponentProps) {
 	const isPending = useIsPending()
 
 	const [form, fields] = useForm({
@@ -161,10 +154,7 @@ export default function ChangePasswordRoute({
 				<Button variant="secondary" asChild>
 					<Link to="..">Cancel</Link>
 				</Button>
-				<StatusButton
-					type="submit"
-					status={isPending ? 'pending' : (form.status ?? 'idle')}
-				>
+				<StatusButton type="submit" status={isPending ? 'pending' : (form.status ?? 'idle')}>
 					Change Password
 				</StatusButton>
 			</div>

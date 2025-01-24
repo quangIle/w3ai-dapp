@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import { faker } from '@faker-js/faker'
-import { type NoteImage, type Note } from '@prisma/client'
+import { type Note, type NoteImage } from '@prisma/client'
+
 import { prisma } from '#app/utils/db.server.ts'
 import { expect, test } from '#tests/playwright-utils.ts'
 
@@ -99,11 +100,7 @@ test('Users can delete note image', async ({ page, login }) => {
 
 	await expect(page.getByRole('heading', { name: note.title })).toBeVisible()
 	// find image tags
-	const images = page
-		.getByRole('main')
-		.getByRole('list')
-		.getByRole('listitem')
-		.getByRole('img')
+	const images = page.getByRole('main').getByRole('list').getByRole('listitem').getByRole('img')
 	const countBefore = await images.count()
 	await page.getByRole('link', { name: 'Edit', exact: true }).click()
 	await page.getByRole('button', { name: 'remove image' }).click()
@@ -126,15 +123,10 @@ function createNoteWithImage() {
 			create: {
 				altText: 'cute koala',
 				contentType: 'image/png',
-				blob: fs.readFileSync(
-					'tests/fixtures/images/kody-notes/cute-koala.png',
-				),
+				blob: fs.readFileSync('tests/fixtures/images/kody-notes/cute-koala.png'),
 			},
 		},
-	} satisfies Omit<
-		Note,
-		'id' | 'createdAt' | 'updatedAt' | 'type' | 'ownerId'
-	> & {
+	} satisfies Omit<Note, 'id' | 'createdAt' | 'updatedAt' | 'type' | 'ownerId'> & {
 		images: { create: Pick<NoteImage, 'altText' | 'blob' | 'contentType'> }
 	}
 }

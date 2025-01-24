@@ -1,30 +1,21 @@
 import { redirect } from 'react-router'
-import {
-	authenticator,
-	getSessionExpirationDate,
-	getUserId,
-} from '#app/utils/auth.server.ts'
-import { ProviderNameSchema, providerLabels } from '#app/utils/connections.tsx'
+
+import { authenticator, getSessionExpirationDate, getUserId } from '#app/utils/auth.server.ts'
+import { providerLabels, ProviderNameSchema } from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
 import { ensurePrimary } from '#app/utils/litefs.server.ts'
 import { combineHeaders } from '#app/utils/misc.tsx'
-import {
-	normalizeEmail,
-	normalizeUsername,
-} from '#app/utils/providers/provider.ts'
+import { normalizeEmail, normalizeUsername } from '#app/utils/providers/provider.ts'
 import {
 	destroyRedirectToHeader,
 	getRedirectCookieValue,
 } from '#app/utils/redirect-cookie.server.ts'
-import {
-	createToastHeaders,
-	redirectWithToast,
-} from '#app/utils/toast.server.ts'
+import { createToastHeaders, redirectWithToast } from '#app/utils/toast.server.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { type Route } from './+types/auth.$provider.callback.ts'
 import { handleNewSession } from './login.server.ts'
-import { onboardingEmailSessionKey } from './onboarding.tsx'
 import { prefilledProfileKey, providerIdKey } from './onboarding_.$provider.tsx'
+import { onboardingEmailSessionKey } from './onboarding.tsx'
 
 const destroyRedirectTo = { 'set-cookie': destroyRedirectToHeader }
 
@@ -155,9 +146,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 		...profile,
 		email: normalizeEmail(profile.email),
 		username:
-			typeof profile.username === 'string'
-				? normalizeUsername(profile.username)
-				: undefined,
+			typeof profile.username === 'string' ? normalizeUsername(profile.username) : undefined,
 	})
 	verifySession.set(providerIdKey, profile.id)
 	const onboardingRedirect = [
@@ -175,11 +164,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 }
 
 async function makeSession(
-	{
-		request,
-		userId,
-		redirectTo,
-	}: { request: Request; userId: string; redirectTo?: string | null },
+	{ request, userId, redirectTo }: { request: Request; userId: string; redirectTo?: string | null },
 	responseInit?: ResponseInit,
 ) {
 	redirectTo ??= '/'

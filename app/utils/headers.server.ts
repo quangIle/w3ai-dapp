@@ -1,4 +1,4 @@
-import { type CacheControlValue, parse, format } from '@tusbar/cache-control'
+import { format, parse, type CacheControlValue } from '@tusbar/cache-control'
 import { type HeadersArgs } from 'react-router'
 
 /**
@@ -39,10 +39,7 @@ export function pipeHeaders({
 
 	headers.set(
 		'Cache-Control',
-		getConservativeCacheControl(
-			parentHeaders.get('Cache-Control'),
-			headers.get('Cache-Control'),
-		),
+		getConservativeCacheControl(parentHeaders.get('Cache-Control'), headers.get('Cache-Control')),
 	)
 
 	// append useful parent headers
@@ -72,9 +69,7 @@ export function pipeHeaders({
 /**
  * Given multiple Cache-Control headers, merge them and get the most conservative one.
  */
-export function getConservativeCacheControl(
-	...cacheControlHeaders: Array<string | null>
-): string {
+export function getConservativeCacheControl(...cacheControlHeaders: Array<string | null>): string {
 	return format(
 		cacheControlHeaders
 			.filter(Boolean)

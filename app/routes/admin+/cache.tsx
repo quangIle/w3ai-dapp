@@ -1,28 +1,13 @@
 import { invariantResponse } from '@epic-web/invariant'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
-import {
-	redirect,
-	Form,
-	Link,
-	useFetcher,
-	useSearchParams,
-	useSubmit,
-} from 'react-router'
+import { Form, Link, redirect, useFetcher, useSearchParams, useSubmit } from 'react-router'
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
 import { Field } from '#app/components/forms.tsx'
 import { Spacer } from '#app/components/spacer.tsx'
 import { Button } from '#app/components/ui/button.tsx'
-import {
-	cache,
-	getAllCacheKeys,
-	lruCache,
-	searchCacheKeys,
-} from '#app/utils/cache.server.ts'
-import {
-	ensureInstance,
-	getAllInstances,
-	getInstanceInfo,
-} from '#app/utils/litefs.server.ts'
+import { cache, getAllCacheKeys, lruCache, searchCacheKeys } from '#app/utils/cache.server.ts'
+import { ensureInstance, getAllInstances, getInstanceInfo } from '#app/utils/litefs.server.ts'
 import { useDebounce, useDoubleCheck } from '#app/utils/misc.tsx'
 import { requireUserWithRole } from '#app/utils/permissions.server.ts'
 import { type Route } from './+types/cache.ts'
@@ -42,8 +27,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 	const limit = Number(searchParams.get('limit') ?? 100)
 
 	const currentInstanceInfo = await getInstanceInfo()
-	const instance =
-		searchParams.get('instance') ?? currentInstanceInfo.currentInstance
+	const instance = searchParams.get('instance') ?? currentInstanceInfo.currentInstance
 	const instances = await getAllInstances()
 	await ensureInstance(instance)
 
@@ -107,10 +91,7 @@ export default function CacheAdminRoute({ loaderData }: Route.ComponentProps) {
 			>
 				<div className="flex-1">
 					<div className="flex flex-1 gap-4">
-						<button
-							type="submit"
-							className="flex h-16 items-center justify-center"
-						>
+						<button type="submit" className="flex h-16 items-center justify-center">
 							🔎
 						</button>
 						<Field
@@ -124,8 +105,7 @@ export default function CacheAdminRoute({ loaderData }: Route.ComponentProps) {
 						/>
 						<div className="flex h-16 w-14 items-center text-lg font-medium text-muted-foreground">
 							<span title="Total results shown">
-								{loaderData.cacheKeys.sqlite.length +
-									loaderData.cacheKeys.lru.length}
+								{loaderData.cacheKeys.sqlite.length + loaderData.cacheKeys.lru.length}
 							</span>
 						</div>
 					</div>
@@ -151,12 +131,8 @@ export default function CacheAdminRoute({ loaderData }: Route.ComponentProps) {
 								{[
 									inst,
 									`(${region})`,
-									inst === loaderData.currentInstanceInfo.currentInstance
-										? '(current)'
-										: '',
-									inst === loaderData.currentInstanceInfo.primaryInstance
-										? ' (primary)'
-										: '',
+									inst === loaderData.currentInstanceInfo.currentInstance ? '(current)' : '',
+									inst === loaderData.currentInstanceInfo.primaryInstance ? ' (primary)' : '',
 								]
 									.filter(Boolean)
 									.join(' ')}
@@ -169,24 +145,14 @@ export default function CacheAdminRoute({ loaderData }: Route.ComponentProps) {
 			<div className="flex flex-col gap-4">
 				<h2 className="text-h2">LRU Cache:</h2>
 				{loaderData.cacheKeys.lru.map((key) => (
-					<CacheKeyRow
-						key={key}
-						cacheKey={key}
-						instance={instance}
-						type="lru"
-					/>
+					<CacheKeyRow key={key} cacheKey={key} instance={instance} type="lru" />
 				))}
 			</div>
 			<Spacer size="3xs" />
 			<div className="flex flex-col gap-4">
 				<h2 className="text-h2">SQLite Cache:</h2>
 				{loaderData.cacheKeys.sqlite.map((key) => (
-					<CacheKeyRow
-						key={key}
-						cacheKey={key}
-						instance={instance}
-						type="sqlite"
-					/>
+					<CacheKeyRow key={key} cacheKey={key} instance={instance} type="sqlite" />
 				))}
 			</div>
 		</div>
@@ -212,16 +178,8 @@ function CacheKeyRow({
 				<input type="hidden" name="cacheKey" value={cacheKey} />
 				<input type="hidden" name="instance" value={instance} />
 				<input type="hidden" name="type" value={type} />
-				<Button
-					size="sm"
-					variant="secondary"
-					{...dc.getButtonProps({ type: 'submit' })}
-				>
-					{fetcher.state === 'idle'
-						? dc.doubleCheck
-							? 'You sure?'
-							: 'Delete'
-						: 'Deleting...'}
+				<Button size="sm" variant="secondary" {...dc.getButtonProps({ type: 'submit' })}>
+					{fetcher.state === 'idle' ? (dc.doubleCheck ? 'You sure?' : 'Delete') : 'Deleting...'}
 				</Button>
 			</fetcher.Form>
 			<Link reloadDocument to={valuePage}>
@@ -235,9 +193,7 @@ export function ErrorBoundary() {
 	return (
 		<GeneralErrorBoundary
 			statusHandlers={{
-				403: ({ error }) => (
-					<p>You are not allowed to do that: {error?.data.message}</p>
-				),
+				403: ({ error }) => <p>You are not allowed to do that: {error?.data.message}</p>,
 			}}
 		/>
 	)

@@ -5,20 +5,18 @@ import { render, screen } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { useState } from 'react'
 import { expect, test } from 'vitest'
+
 import { useDoubleCheck } from './misc.tsx'
 
 function TestComponent() {
-	const [defaultPrevented, setDefaultPrevented] = useState<
-		'idle' | 'no' | 'yes'
-	>('idle')
+	const [defaultPrevented, setDefaultPrevented] = useState<'idle' | 'no' | 'yes'>('idle')
 	const dc = useDoubleCheck()
 	return (
 		<div>
 			<output>Default Prevented: {defaultPrevented}</output>
 			<button
 				{...dc.getButtonProps({
-					onClick: (e) =>
-						setDefaultPrevented(e.defaultPrevented ? 'yes' : 'no'),
+					onClick: (e) => setDefaultPrevented(e.defaultPrevented ? 'yes' : 'no'),
 				})}
 			>
 				{dc.doubleCheck ? 'You sure?' : 'Click me'}

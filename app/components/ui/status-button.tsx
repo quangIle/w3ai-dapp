@@ -1,14 +1,10 @@
 import * as React from 'react'
 import { useSpinDelay } from 'spin-delay'
+
 import { cn } from '#app/utils/misc.tsx'
 import { Button, type ButtonProps } from './button.tsx'
 import { Icon } from './icon.tsx'
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from './tooltip.tsx'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip.tsx'
 
 export const StatusButton = React.forwardRef<
 	HTMLButtonElement,
@@ -25,18 +21,12 @@ export const StatusButton = React.forwardRef<
 	})
 	const companion = {
 		pending: delayedPending ? (
-			<div
-				role="status"
-				className="inline-flex h-6 w-6 items-center justify-center"
-			>
+			<div role="status" className="inline-flex h-6 w-6 items-center justify-center">
 				<Icon name="update" className="animate-spin" title="loading" />
 			</div>
 		) : null,
 		success: (
-			<div
-				role="status"
-				className="inline-flex h-6 w-6 items-center justify-center"
-			>
+			<div role="status" className="inline-flex h-6 w-6 items-center justify-center">
 				<Icon name="check" title="success" />
 			</div>
 		),
@@ -45,22 +35,14 @@ export const StatusButton = React.forwardRef<
 				role="status"
 				className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-destructive"
 			>
-				<Icon
-					name="cross-1"
-					className="text-destructive-foreground"
-					title="error"
-				/>
+				<Icon name="cross-1" className="text-destructive-foreground" title="error" />
 			</div>
 		),
 		idle: null,
 	}[status]
 
 	return (
-		<Button
-			ref={ref}
-			className={cn('flex justify-center gap-4', className)}
-			{...props}
-		>
+		<Button ref={ref} className={cn('flex justify-center gap-4', className)} {...props}>
 			<div>{children}</div>
 			{message ? (
 				<TooltipProvider>

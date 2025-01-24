@@ -1,9 +1,10 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { data, redirect, Form, useSearchParams } from 'react-router'
+import { data, Form, redirect, useSearchParams } from 'react-router'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { safeRedirect } from 'remix-utils/safe-redirect'
 import { z } from 'zod'
+
 import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
 import { Spacer } from '#app/components/spacer.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
@@ -28,8 +29,7 @@ const SignupFormSchema = z
 		username: UsernameSchema,
 		name: NameSchema,
 		agreeToTermsOfServiceAndPrivacyPolicy: z.boolean({
-			required_error:
-				'You must agree to the terms of service and privacy policy',
+			required_error: 'You must agree to the terms of service and privacy policy',
 		}),
 		remember: z.boolean().optional(),
 		redirectTo: z.string().optional(),
@@ -38,9 +38,7 @@ const SignupFormSchema = z
 
 async function requireOnboardingEmail(request: Request) {
 	await requireAnonymous(request)
-	const verifySession = await verifySessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
+	const verifySession = await verifySessionStorage.getSession(request.headers.get('cookie'))
 	const email = verifySession.get(onboardingEmailSessionKey)
 	if (typeof email !== 'string' || !email) {
 		throw redirect('/signup')
@@ -90,9 +88,7 @@ export async function action({ request }: Route.ActionArgs) {
 
 	const { session, remember, redirectTo } = submission.value
 
-	const authSession = await authSessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
+	const authSession = await authSessionStorage.getSession(request.headers.get('cookie'))
 	authSession.set(sessionKey, session.id)
 	const verifySession = await verifySessionStorage.getSession()
 	const headers = new Headers()
@@ -102,10 +98,7 @@ export async function action({ request }: Route.ActionArgs) {
 			expires: remember ? session.expirationDate : undefined,
 		}),
 	)
-	headers.append(
-		'set-cookie',
-		await verifySessionStorage.destroySession(verifySession),
-	)
+	headers.append('set-cookie', await verifySessionStorage.destroySession(verifySession))
 
 	return redirectWithToast(
 		safeRedirect(redirectTo),
@@ -118,10 +111,7 @@ export const meta: Route.MetaFunction = () => {
 	return [{ title: 'Setup Epic Notes Account' }]
 }
 
-export default function OnboardingRoute({
-	loaderData,
-	actionData,
-}: Route.ComponentProps) {
+export default function OnboardingRoute({ loaderData, actionData }: Route.ComponentProps) {
 	const isPending = useIsPending()
 	const [searchParams] = useSearchParams()
 	const redirectTo = searchParams.get('redirectTo')
@@ -142,9 +132,7 @@ export default function OnboardingRoute({
 			<div className="mx-auto w-full max-w-lg">
 				<div className="flex flex-col gap-3 text-center">
 					<h1 className="text-h1">Welcome aboard {loaderData.email}!</h1>
-					<p className="text-body-md text-muted-foreground">
-						Please enter your details.
-					</p>
+					<p className="text-body-md text-muted-foreground">Please enter your details.</p>
 				</div>
 				<Spacer size="xs" />
 				<Form
@@ -194,13 +182,11 @@ export default function OnboardingRoute({
 					<CheckboxField
 						labelProps={{
 							htmlFor: fields.agreeToTermsOfServiceAndPrivacyPolicy.id,
-							children:
-								'Do you agree to our Terms of Service and Privacy Policy?',
+							children: 'Do you agree to our Terms of Service and Privacy Policy?',
 						}}
-						buttonProps={getInputProps(
-							fields.agreeToTermsOfServiceAndPrivacyPolicy,
-							{ type: 'checkbox' },
-						)}
+						buttonProps={getInputProps(fields.agreeToTermsOfServiceAndPrivacyPolicy, {
+							type: 'checkbox',
+						})}
 						errors={fields.agreeToTermsOfServiceAndPrivacyPolicy.errors}
 					/>
 					<CheckboxField

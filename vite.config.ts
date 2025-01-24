@@ -1,6 +1,5 @@
 import { reactRouter } from '@react-router/dev/vite'
 import { sentryVitePlugin } from '@sentry/vite-plugin'
-
 import { envOnlyMacros } from 'vite-env-only'
 import { type ViteUserConfig } from 'vitest/config'
 
@@ -50,10 +49,7 @@ export default {
 						},
 					},
 					sourcemaps: {
-						filesToDeleteAfterUpload: [
-							'./build/**/*.map',
-							'.server-build/**/*.map',
-						],
+						filesToDeleteAfterUpload: ['./build/**/*.map', '.server-build/**/*.map'],
 					},
 				})
 			: null,

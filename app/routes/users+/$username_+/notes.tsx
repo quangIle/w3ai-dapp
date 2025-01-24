@@ -1,5 +1,6 @@
 import { invariantResponse } from '@epic-web/invariant'
 import { Link, NavLink, Outlet } from 'react-router'
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { prisma } from '#app/utils/db.server.ts'
@@ -90,9 +91,7 @@ export function ErrorBoundary() {
 	return (
 		<GeneralErrorBoundary
 			statusHandlers={{
-				404: ({ params }) => (
-					<p>No user with the username "{params.username}" exists</p>
-				),
+				404: ({ params }) => <p>No user with the username "{params.username}" exists</p>,
 			}}
 		/>
 	)

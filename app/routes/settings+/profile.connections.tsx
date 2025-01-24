@@ -2,6 +2,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import { useState } from 'react'
 import { data, useFetcher } from 'react-router'
+
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
@@ -14,10 +15,10 @@ import { requireUserId } from '#app/utils/auth.server.ts'
 import { resolveConnectionData } from '#app/utils/connections.server.ts'
 import {
 	ProviderConnectionForm,
-	type ProviderName,
-	ProviderNameSchema,
 	providerIcons,
 	providerNames,
+	ProviderNameSchema,
+	type ProviderName,
 } from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
 import { pipeHeaders } from '#app/utils/headers.server.js'
@@ -63,11 +64,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 		const r = ProviderNameSchema.safeParse(connection.providerName)
 		if (!r.success) continue
 		const providerName = r.data
-		const connectionData = await resolveConnectionData(
-			providerName,
-			connection.providerId,
-			{ timings },
-		)
+		const connectionData = await resolveConnectionData(providerName, connection.providerId, {
+			timings,
+		})
 		connections.push({
 			...connectionData,
 			providerName,
@@ -90,10 +89,7 @@ export const headers: Route.HeadersFunction = pipeHeaders
 export async function action({ request }: Route.ActionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
-	invariantResponse(
-		formData.get('intent') === 'delete-connection',
-		'Invalid intent',
-	)
+	invariantResponse(formData.get('intent') === 'delete-connection', 'Invalid intent')
 	invariantResponse(
 		await userCanDeleteConnections(userId),
 		'You cannot delete your last connection unless you have a password.',
@@ -122,10 +118,7 @@ export default function Connections({ loaderData }: Route.ComponentProps) {
 					<ul className="flex flex-col gap-4">
 						{loaderData.connections.map((c) => (
 							<li key={c.id}>
-								<Connection
-									connection={c}
-									canDelete={loaderData.canDeleteConnections}
-								/>
+								<Connection connection={c} canDelete={loaderData.canDeleteConnections} />
 							</li>
 						))}
 					</ul>
@@ -135,11 +128,7 @@ export default function Connections({ loaderData }: Route.ComponentProps) {
 			)}
 			<div className="mt-5 flex flex-col gap-5 border-b-2 border-t-2 border-border py-3">
 				{providerNames.map((providerName) => (
-					<ProviderConnectionForm
-						key={providerName}
-						type="Connect"
-						providerName={providerName}
-					/>
+					<ProviderConnectionForm key={providerName} type="Connect" providerName={providerName} />
 				))}
 			</div>
 		</div>

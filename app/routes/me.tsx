@@ -1,5 +1,6 @@
 import { redirect } from 'react-router'
-import { requireUserId, logout } from '#app/utils/auth.server.ts'
+
+import { logout, requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { type Route } from './+types/me.ts'
 

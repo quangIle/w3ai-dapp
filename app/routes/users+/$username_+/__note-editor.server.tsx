@@ -1,16 +1,13 @@
 import { parseWithZod } from '@conform-to/zod'
-import { type FileUpload, parseFormData } from '@mjackson/form-data-parser'
+import { parseFormData, type FileUpload } from '@mjackson/form-data-parser'
 import { createId as cuid } from '@paralleldrive/cuid2'
 import { data, redirect, type ActionFunctionArgs } from 'react-router'
 import { z } from 'zod'
+
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { uploadHandler } from '#app/utils/file-uploads.server.ts'
-import {
-	MAX_UPLOAD_SIZE,
-	NoteEditorSchema,
-	type ImageFieldset,
-} from './__note-editor'
+import { MAX_UPLOAD_SIZE, NoteEditorSchema, type ImageFieldset } from './__note-editor'
 
 function imageHasFile(
 	image: ImageFieldset,
@@ -27,11 +24,9 @@ function imageHasId(
 export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 
-	const formData = await parseFormData(
-		request,
-		async (file: FileUpload) => uploadHandler(file),
-		{ maxFileSize: MAX_UPLOAD_SIZE },
-	)
+	const formData = await parseFormData(request, async (file: FileUpload) => uploadHandler(file), {
+		maxFileSize: MAX_UPLOAD_SIZE,
+	})
 
 	const submission = await parseWithZod(formData, {
 		schema: NoteEditorSchema.superRefine(async (data, ctx) => {
@@ -91,13 +86,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		)
 	}
 
-	const {
-		id: noteId,
-		title,
-		content,
-		imageUpdates = [],
-		newImages = [],
-	} = submission.value
+	const { id: noteId, title, content, imageUpdates = [], newImages = [] } = submission.value
 
 	const updatedNote = await prisma.note.upsert({
 		select: { id: true, owner: { select: { username: true } } },
@@ -122,7 +111,5 @@ export async function action({ request }: ActionFunctionArgs) {
 		},
 	})
 
-	return redirect(
-		`/users/${updatedNote.owner.username}/notes/${updatedNote.id}`,
-	)
+	return redirect(`/users/${updatedNote.owner.username}/notes/${updatedNote.id}`)
 }

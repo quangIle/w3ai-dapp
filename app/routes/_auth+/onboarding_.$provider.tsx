@@ -1,27 +1,17 @@
-import {
-	getFormProps,
-	getInputProps,
-	useForm,
-	type SubmissionResult,
-} from '@conform-to/react'
+import { getFormProps, getInputProps, useForm, type SubmissionResult } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import {
-	redirect,
-	data,
-	type Params,
-	Form,
-	useSearchParams,
-} from 'react-router'
+import { data, Form, redirect, useSearchParams, type Params } from 'react-router'
 import { safeRedirect } from 'remix-utils/safe-redirect'
 import { z } from 'zod'
+
 import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
 import { Spacer } from '#app/components/spacer.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	authenticator,
+	requireAnonymous,
 	sessionKey,
 	signupWithConnection,
-	requireAnonymous,
 } from '#app/utils/auth.server.ts'
 import { connectionSessionStorage } from '#app/utils/connections.server'
 import { ProviderNameSchema } from '#app/utils/connections.tsx'
@@ -48,17 +38,9 @@ const SignupFormSchema = z.object({
 	redirectTo: z.string().optional(),
 })
 
-async function requireData({
-	request,
-	params,
-}: {
-	request: Request
-	params: Params
-}) {
+async function requireData({ request, params }: { request: Request; params: Params }) {
 	await requireAnonymous(request)
-	const verifySession = await verifySessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
+	const verifySession = await verifySessionStorage.getSession(request.headers.get('cookie'))
 	const email = verifySession.get(onboardingEmailSessionKey)
 	const providerId = verifySession.get(providerIdKey)
 	const result = z
@@ -78,12 +60,8 @@ async function requireData({
 
 export async function loader({ request, params }: Route.LoaderArgs) {
 	const { email } = await requireData({ request, params })
-	const connectionSession = await connectionSessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
-	const verifySession = await verifySessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
+	const connectionSession = await connectionSessionStorage.getSession(request.headers.get('cookie'))
+	const verifySession = await verifySessionStorage.getSession(request.headers.get('cookie'))
 	const prefilledProfile = verifySession.get(prefilledProfileKey)
 
 	const formError = connectionSession.get(authenticator.sessionErrorKey)
@@ -106,9 +84,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 		params,
 	})
 	const formData = await request.formData()
-	const verifySession = await verifySessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
+	const verifySession = await verifySessionStorage.getSession(request.headers.get('cookie'))
 
 	const submission = await parseWithZod(formData, {
 		schema: SignupFormSchema.superRefine(async (data, ctx) => {
@@ -145,9 +121,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 	const { session, remember, redirectTo } = submission.value
 
-	const authSession = await authSessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
+	const authSession = await authSessionStorage.getSession(request.headers.get('cookie'))
 	authSession.set(sessionKey, session.id)
 	const headers = new Headers()
 	headers.append(
@@ -156,10 +130,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 			expires: remember ? session.expirationDate : undefined,
 		}),
 	)
-	headers.append(
-		'set-cookie',
-		await verifySessionStorage.destroySession(verifySession),
-	)
+	headers.append('set-cookie', await verifySessionStorage.destroySession(verifySession))
 
 	return redirectWithToast(
 		safeRedirect(redirectTo),
@@ -172,10 +143,7 @@ export const meta: Route.MetaFunction = () => {
 	return [{ title: 'Setup Epic Notes Account' }]
 }
 
-export default function OnboardingProviderRoute({
-	loaderData,
-	actionData,
-}: Route.ComponentProps) {
+export default function OnboardingProviderRoute({ loaderData, actionData }: Route.ComponentProps) {
 	const isPending = useIsPending()
 	const [searchParams] = useSearchParams()
 	const redirectTo = searchParams.get('redirectTo')
@@ -195,9 +163,7 @@ export default function OnboardingProviderRoute({
 			<div className="mx-auto w-full max-w-lg">
 				<div className="flex flex-col gap-3 text-center">
 					<h1 className="text-h1">Welcome aboard {loaderData.email}!</h1>
-					<p className="text-body-md text-muted-foreground">
-						Please enter your details.
-					</p>
+					<p className="text-body-md text-muted-foreground">Please enter your details.</p>
 				</div>
 				<Spacer size="xs" />
 				<Form
@@ -212,9 +178,7 @@ export default function OnboardingProviderRoute({
 								alt="Profile"
 								className="h-24 w-24 rounded-full"
 							/>
-							<p className="text-body-sm text-muted-foreground">
-								You can change your photo later
-							</p>
+							<p className="text-body-sm text-muted-foreground">You can change your photo later</p>
 							<input {...getInputProps(fields.imageUrl, { type: 'hidden' })} />
 						</div>
 					) : null}
@@ -239,13 +203,11 @@ export default function OnboardingProviderRoute({
 					<CheckboxField
 						labelProps={{
 							htmlFor: fields.agreeToTermsOfServiceAndPrivacyPolicy.id,
-							children:
-								'Do you agree to our Terms of Service and Privacy Policy?',
+							children: 'Do you agree to our Terms of Service and Privacy Policy?',
 						}}
-						buttonProps={getInputProps(
-							fields.agreeToTermsOfServiceAndPrivacyPolicy,
-							{ type: 'checkbox' },
-						)}
+						buttonProps={getInputProps(fields.agreeToTermsOfServiceAndPrivacyPolicy, {
+							type: 'checkbox',
+						})}
 						errors={fields.agreeToTermsOfServiceAndPrivacyPolicy.errors}
 					/>
 					<CheckboxField
@@ -257,9 +219,7 @@ export default function OnboardingProviderRoute({
 						errors={fields.remember.errors}
 					/>
 
-					{redirectTo ? (
-						<input type="hidden" name="redirectTo" value={redirectTo} />
-					) : null}
+					{redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
 
 					<ErrorList errors={form.errors} id={form.errorId} />
 

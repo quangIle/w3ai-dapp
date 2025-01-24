@@ -1,7 +1,8 @@
 import { type SVGProps } from 'react'
+
 import { cn } from '#app/utils/misc.tsx'
-import href from './icons/sprite.svg'
 import { type IconName } from '@/icon-name'
+import href from './icons/sprite.svg'
 
 export { href }
 export { IconName }
@@ -51,25 +52,14 @@ export function Icon({
 }) {
 	if (children) {
 		return (
-			<span
-				className={`inline-flex items-center ${childrenSizeClassName[size]}`}
-			>
-				<Icon
-					name={name}
-					size={size}
-					className={className}
-					title={title}
-					{...props}
-				/>
+			<span className={`inline-flex items-center ${childrenSizeClassName[size]}`}>
+				<Icon name={name} size={size} className={className} title={title} {...props} />
 				{children}
 			</span>
 		)
 	}
 	return (
-		<svg
-			{...props}
-			className={cn(sizeClassName[size], 'inline self-center', className)}
-		>
+		<svg {...props} className={cn(sizeClassName[size], 'inline self-center', className)}>
 			{title ? <title>{title}</title> : null}
 			<use href={`${href}#${name}`} />
 		</svg>

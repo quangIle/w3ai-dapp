@@ -1,11 +1,12 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
-import { type FileUpload, parseFormData } from '@mjackson/form-data-parser'
+import { parseFormData, type FileUpload } from '@mjackson/form-data-parser'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import { useState } from 'react'
-import { data, redirect, Form, useNavigation } from 'react-router'
+import { data, Form, redirect, useNavigation } from 'react-router'
 import { z } from 'zod'
+
 import { ErrorList } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
@@ -13,11 +14,7 @@ import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { uploadHandler } from '#app/utils/file-uploads.server.ts'
-import {
-	getUserImgSrc,
-	useDoubleCheck,
-	useIsPending,
-} from '#app/utils/misc.tsx'
+import { getUserImgSrc, useDoubleCheck, useIsPending } from '#app/utils/misc.tsx'
 import { type Route } from './+types/profile.photo.ts'
 import { type BreadcrumbHandle } from './profile.tsx'
 
@@ -37,16 +34,10 @@ const NewImageSchema = z.object({
 	photoFile: z
 		.instanceof(File)
 		.refine((file) => file.size > 0, 'Image is required')
-		.refine(
-			(file) => file.size <= MAX_SIZE,
-			'Image size must be less than 3MB',
-		),
+		.refine((file) => file.size <= MAX_SIZE, 'Image size must be less than 3MB'),
 })
 
-const PhotoFormSchema = z.discriminatedUnion('intent', [
-	DeleteImageSchema,
-	NewImageSchema,
-])
+const PhotoFormSchema = z.discriminatedUnion('intent', [DeleteImageSchema, NewImageSchema])
 
 export async function loader({ request }: Route.LoaderArgs) {
 	const userId = await requireUserId(request)
@@ -66,11 +57,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request }: Route.ActionArgs) {
 	const userId = await requireUserId(request)
 
-	const formData = await parseFormData(
-		request,
-		async (file: FileUpload) => uploadHandler(file),
-		{ maxFileSize: MAX_SIZE },
-	)
+	const formData = await parseFormData(request, async (file: FileUpload) => uploadHandler(file), {
+		maxFileSize: MAX_SIZE,
+	})
 	const submission = await parseWithZod(formData, {
 		schema: PhotoFormSchema.transform(async (data) => {
 			if (data.intent === 'delete') return { intent: 'delete' }
@@ -111,10 +100,7 @@ export async function action({ request }: Route.ActionArgs) {
 	return redirect('/settings/profile')
 }
 
-export default function PhotoRoute({
-	loaderData,
-	actionData,
-}: Route.ComponentProps) {
+export default function PhotoRoute({ loaderData, actionData }: Route.ComponentProps) {
 	const doubleCheckDeleteImage = useDoubleCheck()
 
 	const navigation = useNavigation()
@@ -145,10 +131,7 @@ export default function PhotoRoute({
 				{...getFormProps(form)}
 			>
 				<img
-					src={
-						newImageSrc ??
-						(loaderData.user ? getUserImgSrc(loaderData.user.image?.id) : '')
-					}
+					src={newImageSrc ?? (loaderData.user ? getUserImgSrc(loaderData.user.image?.id) : '')}
 					className="h-52 w-52 rounded-full object-cover"
 					alt={loaderData.user?.name ?? loaderData.user?.username}
 				/>
@@ -225,9 +208,7 @@ export default function PhotoRoute({
 							}
 						>
 							<Icon name="trash">
-								{doubleCheckDeleteImage.doubleCheck
-									? 'Are you sure?'
-									: 'Delete'}
+								{doubleCheckDeleteImage.doubleCheck ? 'Are you sure?' : 'Delete'}
 							</Icon>
 						</StatusButton>
 					) : null}

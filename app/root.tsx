@@ -10,6 +10,7 @@ import {
 	useMatches,
 } from 'react-router'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
+
 import { type Route } from './+types/root.ts'
 import appleTouchIconAssetUrl from './assets/favicons/apple-touch-icon.png'
 import faviconAssetUrl from './assets/favicons/favicon.svg'
@@ -21,11 +22,7 @@ import { Button } from './components/ui/button.tsx'
 import { href as iconsHref } from './components/ui/icon.tsx'
 import { EpicToaster } from './components/ui/sonner.tsx'
 import { UserDropdown } from './components/user-dropdown.tsx'
-import {
-	ThemeSwitch,
-	useOptionalTheme,
-	useTheme,
-} from './routes/resources+/theme-switch.tsx'
+import { ThemeSwitch, useOptionalTheme, useTheme } from './routes/resources+/theme-switch.tsx'
 import tailwindStyleSheetUrl from './styles/tailwind.css?url'
 import { getUserId, logout } from './utils/auth.server.ts'
 import { ClientHintCheck, getHints } from './utils/client-hints.tsx'
@@ -35,7 +32,7 @@ import { pipeHeaders } from './utils/headers.server.ts'
 import { honeypot } from './utils/honeypot.server.ts'
 import { combineHeaders, getDomainUrl } from './utils/misc.tsx'
 import { useNonce } from './utils/nonce-provider.ts'
-import { type Theme, getTheme } from './utils/theme.server.ts'
+import { getTheme, type Theme } from './utils/theme.server.ts'
 import { makeTimings, time } from './utils/timing.server.ts'
 import { getToast } from './utils/toast.server.ts'
 import { useOptionalUser } from './utils/user.ts'
@@ -123,10 +120,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 			honeyProps,
 		},
 		{
-			headers: combineHeaders(
-				{ 'Server-Timing': timings.toString() },
-				toastHeaders,
-			),
+			headers: combineHeaders({ 'Server-Timing': timings.toString() }, toastHeaders),
 		},
 	)
 }
@@ -153,9 +147,7 @@ function Document({
 				<Meta />
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width,initial-scale=1" />
-				{allowIndexing ? null : (
-					<meta name="robots" content="noindex, nofollow" />
-				)}
+				{allowIndexing ? null : <meta name="robots" content="noindex, nofollow" />}
 				<Links />
 			</head>
 			<body className="bg-background text-foreground">
@@ -200,9 +192,7 @@ function App() {
 				<header className="container py-6">
 					<nav className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap md:gap-8">
 						<Logo />
-						<div className="ml-auto hidden max-w-sm flex-1 sm:block">
-							{searchBar}
-						</div>
+						<div className="ml-auto hidden max-w-sm flex-1 sm:block">{searchBar}</div>
 						<div className="flex items-center gap-10">
 							{user ? (
 								<UserDropdown />
@@ -234,12 +224,8 @@ function App() {
 function Logo() {
 	return (
 		<Link to="/" className="group grid leading-snug">
-			<span className="font-light transition group-hover:-translate-x-1">
-				epic
-			</span>
-			<span className="font-bold transition group-hover:translate-x-1">
-				notes
-			</span>
+			<span className="font-light transition group-hover:-translate-x-1">epic</span>
+			<span className="font-bold transition group-hover:translate-x-1">notes</span>
 		</Link>
 	)
 }

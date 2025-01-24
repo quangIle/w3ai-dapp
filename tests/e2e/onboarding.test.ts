@@ -1,16 +1,11 @@
 import { invariant } from '@epic-web/invariant'
 import { faker } from '@faker-js/faker'
+
 import { prisma } from '#app/utils/db.server.ts'
-import {
-	normalizeEmail,
-	normalizeUsername,
-} from '#app/utils/providers/provider'
-import {
-	USERNAME_MAX_LENGTH,
-	USERNAME_MIN_LENGTH,
-} from '#app/utils/user-validation'
+import { normalizeEmail, normalizeUsername } from '#app/utils/providers/provider'
+import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from '#app/utils/user-validation'
 import { readEmail } from '#tests/mocks/utils.ts'
-import { createUser, expect, test as base } from '#tests/playwright-utils.ts'
+import { test as base, createUser, expect } from '#tests/playwright-utils.ts'
 
 const URL_REGEX = /(?<url>https?:\/\/[^\s$.?#].[^\s]*)/
 const CODE_REGEX = /Here's your verification code: (?<code>[\d\w]+)/
@@ -60,9 +55,7 @@ test('onboarding with link', async ({ page, getOnboardingData }) => {
 	await emailTextbox.fill(onboardingData.email)
 
 	await page.getByRole('button', { name: /submit/i }).click()
-	await expect(
-		page.getByRole('button', { name: /submit/i, disabled: true }),
-	).toBeVisible()
+	await expect(page.getByRole('button', { name: /submit/i, disabled: true })).toBeVisible()
 	await expect(page.getByText(/check your email/i)).toBeVisible()
 
 	const email = await readEmail(onboardingData.email)
@@ -82,9 +75,7 @@ test('onboarding with link', async ({ page, getOnboardingData }) => {
 		.click()
 
 	await expect(page).toHaveURL(`/onboarding`)
-	await page
-		.getByRole('textbox', { name: /^username/i })
-		.fill(onboardingData.username)
+	await page.getByRole('textbox', { name: /^username/i }).fill(onboardingData.username)
 
 	await page.getByRole('textbox', { name: /^name/i }).fill(onboardingData.name)
 
@@ -120,9 +111,7 @@ test('onboarding with a short code', async ({ page, getOnboardingData }) => {
 	await emailTextbox.fill(onboardingData.email)
 
 	await page.getByRole('button', { name: /submit/i }).click()
-	await expect(
-		page.getByRole('button', { name: /submit/i, disabled: true }),
-	).toBeVisible()
+	await expect(page.getByRole('button', { name: /submit/i, disabled: true })).toBeVisible()
 	await expect(page.getByText(/check your email/i)).toBeVisible()
 
 	const email = await readEmail(onboardingData.email)
@@ -163,19 +152,13 @@ test('completes onboarding after GitHub OAuth given valid user details', async (
 	// fields are pre-populated for the user, so we only need to accept
 	// terms of service and hit the 'crete an account' button
 	const usernameInput = page.getByRole('textbox', { name: /username/i })
-	await expect(usernameInput).toHaveValue(
-		normalizeUsername(ghUser.profile.login),
-	)
-	await expect(page.getByRole('textbox', { name: /^name/i })).toHaveValue(
-		ghUser.profile.name,
-	)
+	await expect(usernameInput).toHaveValue(normalizeUsername(ghUser.profile.login))
+	await expect(page.getByRole('textbox', { name: /^name/i })).toHaveValue(ghUser.profile.name)
 	const createAccountButton = page.getByRole('button', {
 		name: /create an account/i,
 	})
 
-	await page
-		.getByLabel(/do you agree to our terms of service and privacy policy/i)
-		.check()
+	await page.getByLabel(/do you agree to our terms of service and privacy policy/i).check()
 	await createAccountButton.click()
 	await expect(page).toHaveURL(/signup/i)
 
@@ -226,10 +209,7 @@ test('logs user in after GitHub OAuth if they are already registered', async ({
 	await expect(page).toHaveURL(`/`)
 	await expect(
 		page.getByText(
-			new RegExp(
-				`your "${ghUser!.profile.login}" github account has been connected`,
-				'i',
-			),
+			new RegExp(`your "${ghUser!.profile.login}" github account has been connected`, 'i'),
 		),
 	).toBeVisible()
 
@@ -269,15 +249,11 @@ test('shows help texts on entering invalid details on onboarding page after GitH
 	await expect(createAccountButton.getByRole('status')).toBeVisible()
 	await expect(createAccountButton.getByText('error')).toBeAttached()
 	await expect(
-		page.getByText(
-			/username can only include letters, numbers, and underscores/i,
-		),
+		page.getByText(/username can only include letters, numbers, and underscores/i),
 	).toBeVisible()
 	// but we also never checked that privacy consent box
 	await expect(
-		page.getByText(
-			/you must agree to the terms of service and privacy policy/i,
-		),
+		page.getByText(/you must agree to the terms of service and privacy policy/i),
 	).toBeVisible()
 	await expect(page).toHaveURL(/\/onboarding\/github/)
 
@@ -288,9 +264,7 @@ test('shows help texts on entering invalid details on onboarding page after GitH
 	await expect(page).toHaveURL(/\/onboarding\/github/)
 
 	// too short username
-	await usernameInput.fill(
-		faker.string.alphanumeric({ length: USERNAME_MIN_LENGTH - 1 }),
-	)
+	await usernameInput.fill(faker.string.alphanumeric({ length: USERNAME_MIN_LENGTH - 1 }))
 	await createAccountButton.click()
 	await expect(page.getByText(/username is too short/i)).toBeVisible()
 
@@ -306,9 +280,7 @@ test('shows help texts on entering invalid details on onboarding page after GitH
 	await expect(page.getByText(/username is too long/i)).not.toBeVisible()
 
 	// still unchecked 'terms of service' checkbox
-	await usernameInput.fill(
-		normalizeUsername(`U5er_name_0k_${faker.person.lastName()}`),
-	)
+	await usernameInput.fill(normalizeUsername(`U5er_name_0k_${faker.person.lastName()}`))
 	await createAccountButton.click()
 	await expect(
 		page.getByText(/must agree to the terms of service and privacy policy/i),
@@ -316,9 +288,7 @@ test('shows help texts on entering invalid details on onboarding page after GitH
 	await expect(page).toHaveURL(/\/onboarding\/github/)
 
 	// we are all set up and ...
-	await page
-		.getByLabel(/do you agree to our terms of service and privacy policy/i)
-		.check()
+	await page.getByLabel(/do you agree to our terms of service and privacy policy/i).check()
 	await createAccountButton.click()
 	await expect(createAccountButton.getByText('error')).not.toBeAttached()
 
@@ -348,9 +318,7 @@ test('reset password with a link', async ({ page, insertNewUser }) => {
 	await page.getByRole('link', { name: /forgot password/i }).click()
 	await expect(page).toHaveURL('/forgot-password')
 
-	await expect(
-		page.getByRole('heading', { name: /forgot password/i }),
-	).toBeVisible()
+	await expect(page.getByRole('heading', { name: /forgot password/i })).toBeVisible()
 	await page.getByRole('textbox', { name: /username/i }).fill(user.username)
 	await page.getByRole('button', { name: /recover password/i }).click()
 	await expect(
@@ -380,9 +348,7 @@ test('reset password with a link', async ({ page, insertNewUser }) => {
 	await page.getByLabel(/^confirm password$/i).fill(newPassword)
 
 	await page.getByRole('button', { name: /reset password/i }).click()
-	await expect(
-		page.getByRole('button', { name: /reset password/i, disabled: true }),
-	).toBeVisible()
+	await expect(page.getByRole('button', { name: /reset password/i, disabled: true })).toBeVisible()
 
 	await expect(page).toHaveURL('/login')
 	await page.getByRole('textbox', { name: /username/i }).fill(user.username)
@@ -406,9 +372,7 @@ test('reset password with a short code', async ({ page, insertNewUser }) => {
 	await page.getByRole('link', { name: /forgot password/i }).click()
 	await expect(page).toHaveURL('/forgot-password')
 
-	await expect(
-		page.getByRole('heading', { name: /forgot password/i }),
-	).toBeVisible()
+	await expect(page.getByRole('heading', { name: /forgot password/i })).toBeVisible()
 	await page.getByRole('textbox', { name: /username/i }).fill(user.username)
 	await page.getByRole('button', { name: /recover password/i }).click()
 	await expect(

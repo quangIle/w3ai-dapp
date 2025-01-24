@@ -1,5 +1,6 @@
 import { format, parse } from '@tusbar/cache-control'
 import { expect, test } from 'vitest'
+
 import { getConservativeCacheControl } from './headers.server.ts'
 
 test('works for basic usecase', () => {
@@ -18,9 +19,7 @@ test('works for basic usecase', () => {
 	)
 })
 test('retains boolean directive', () => {
-	const result = parse(
-		getConservativeCacheControl('private', 'no-cache,no-store'),
-	)
+	const result = parse(getConservativeCacheControl('private', 'no-cache,no-store'))
 
 	expect(result.private).toEqual(true)
 	expect(result.noCache).toEqual(true)
@@ -28,10 +27,7 @@ test('retains boolean directive', () => {
 })
 test('gets smallest number directive', () => {
 	const result = parse(
-		getConservativeCacheControl(
-			'max-age=10, s-maxage=300',
-			'max-age=300, s-maxage=600',
-		),
+		getConservativeCacheControl('max-age=10, s-maxage=300', 'max-age=300, s-maxage=600'),
 	)
 
 	expect(result.maxAge).toEqual(10)

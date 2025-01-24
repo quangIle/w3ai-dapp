@@ -1,10 +1,8 @@
 import { redirect } from 'react-router'
 import { z } from 'zod'
+
 import { cache } from '#app/utils/cache.server.ts'
-import {
-	getInstanceInfo,
-	getInternalInstanceDomain,
-} from '#app/utils/litefs.server'
+import { getInstanceInfo, getInternalInstanceDomain } from '#app/utils/litefs.server'
 import { type Route } from './+types/cache_.sqlite.ts'
 
 export async function updatePrimaryCacheValue({
@@ -40,8 +38,7 @@ export async function action({ request }: Route.ActionArgs) {
 		)
 	}
 	const token = process.env.INTERNAL_COMMAND_TOKEN
-	const isAuthorized =
-		request.headers.get('Authorization') === `Bearer ${token}`
+	const isAuthorized = request.headers.get('Authorization') === `Bearer ${token}`
 	if (!isAuthorized) {
 		// nah, you can't be here...
 		return redirect('https://www.youtube.com/watch?v=dQw4w9WgXcQ')

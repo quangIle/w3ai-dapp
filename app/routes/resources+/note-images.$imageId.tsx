@@ -1,4 +1,5 @@
 import { invariantResponse } from '@epic-web/invariant'
+
 import { prisma } from '#app/utils/db.server.ts'
 import { type Route } from './+types/note-images.$imageId.ts'
 

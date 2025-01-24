@@ -100,13 +100,7 @@ export async function getUserImages() {
 	return userImages
 }
 
-export async function img({
-	altText,
-	filepath,
-}: {
-	altText?: string
-	filepath: string
-}) {
+export async function img({ altText, filepath }: { altText?: string; filepath: string }) {
 	return {
 		altText,
 		contentType: filepath.endsWith('.png') ? 'image/png' : 'image/jpeg',

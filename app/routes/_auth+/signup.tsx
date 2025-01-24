@@ -2,16 +2,14 @@ import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import * as E from '@react-email/components'
-import { data, redirect, Form, useSearchParams } from 'react-router'
+import { data, Form, redirect, useSearchParams } from 'react-router'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import {
-	ProviderConnectionForm,
-	providerNames,
-} from '#app/utils/connections.tsx'
+import { ProviderConnectionForm, providerNames } from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
 import { sendEmail } from '#app/utils/email.server.ts'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
@@ -84,13 +82,7 @@ export async function action({ request }: Route.ActionArgs) {
 	}
 }
 
-export function SignupEmail({
-	onboardingUrl,
-	otp,
-}: {
-	onboardingUrl: string
-	otp: string
-}) {
+export function SignupEmail({ onboardingUrl, otp }: { onboardingUrl: string; otp: string }) {
 	return (
 		<E.Html lang="en" dir="ltr">
 			<E.Container>
@@ -135,9 +127,7 @@ export default function SignupRoute({ actionData }: Route.ComponentProps) {
 		<div className="container flex flex-col justify-center pb-32 pt-20">
 			<div className="text-center">
 				<h1 className="text-h1">Let's start your journey!</h1>
-				<p className="mt-3 text-body-md text-muted-foreground">
-					Please enter your email.
-				</p>
+				<p className="mt-3 text-body-md text-muted-foreground">Please enter your email.</p>
 			</div>
 			<div className="mx-auto mt-16 min-w-full max-w-sm sm:min-w-[368px]">
 				<Form method="POST" {...getFormProps(form)}>

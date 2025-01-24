@@ -1,6 +1,7 @@
 import { invariant } from '@epic-web/invariant'
 import { redirect } from 'react-router'
 import { safeRedirect } from 'remix-utils/safe-redirect'
+
 import { twoFAVerificationType } from '#app/routes/settings+/profile.two-factor.tsx'
 import { getUserId, sessionKey } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
@@ -51,17 +52,14 @@ export async function handleNewSession(
 			combineResponseInits(
 				{
 					headers: {
-						'set-cookie':
-							await verifySessionStorage.commitSession(verifySession),
+						'set-cookie': await verifySessionStorage.commitSession(verifySession),
 					},
 				},
 				responseInit,
 			),
 		)
 	} else {
-		const authSession = await authSessionStorage.getSession(
-			request.headers.get('cookie'),
-		)
+		const authSession = await authSessionStorage.getSession(request.headers.get('cookie'))
 		authSession.set(sessionKey, session.id)
 
 		return redirect(
@@ -80,20 +78,10 @@ export async function handleNewSession(
 	}
 }
 
-export async function handleVerification({
-	request,
-	submission,
-}: VerifyFunctionArgs) {
-	invariant(
-		submission.status === 'success',
-		'Submission should be successful by now',
-	)
-	const authSession = await authSessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
-	const verifySession = await verifySessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
+export async function handleVerification({ request, submission }: VerifyFunctionArgs) {
+	invariant(submission.status === 'success', 'Submission should be successful by now')
+	const authSession = await authSessionStorage.getSession(request.headers.get('cookie'))
+	const verifySession = await verifySessionStorage.getSession(request.headers.get('cookie'))
 
 	const remember = verifySession.get(rememberKey)
 	const { redirectTo } = submission.value
@@ -122,27 +110,17 @@ export async function handleVerification({
 			}),
 		)
 	} else {
-		headers.append(
-			'set-cookie',
-			await authSessionStorage.commitSession(authSession),
-		)
+		headers.append('set-cookie', await authSessionStorage.commitSession(authSession))
 	}
 
-	headers.append(
-		'set-cookie',
-		await verifySessionStorage.destroySession(verifySession),
-	)
+	headers.append('set-cookie', await verifySessionStorage.destroySession(verifySession))
 
 	return redirect(safeRedirect(redirectTo), { headers })
 }
 
 export async function shouldRequestTwoFA(request: Request) {
-	const authSession = await authSessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
-	const verifySession = await verifySessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
+	const authSession = await authSessionStorage.getSession(request.headers.get('cookie'))
+	const verifySession = await verifySessionStorage.getSession(request.headers.get('cookie'))
 	if (verifySession.has(unverifiedSessionIdKey)) return true
 	const userId = await getUserId(request)
 	if (!userId) return false

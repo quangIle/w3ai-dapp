@@ -1,21 +1,14 @@
 import { test as base } from '@playwright/test'
 import { type User as UserModel } from '@prisma/client'
 import * as setCookieParser from 'set-cookie-parser'
-import {
-	getPasswordHash,
-	getSessionExpirationDate,
-	sessionKey,
-} from '#app/utils/auth.server.ts'
+
+import { getPasswordHash, getSessionExpirationDate, sessionKey } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { MOCK_CODE_GITHUB_HEADER } from '#app/utils/providers/constants.js'
 import { normalizeEmail } from '#app/utils/providers/provider.js'
 import { authSessionStorage } from '#app/utils/session.server.ts'
 import { createUser } from './db-utils.ts'
-import {
-	type GitHubUser,
-	deleteGitHubUser,
-	insertGitHubUser,
-} from './mocks/github.ts'
+import { deleteGitHubUser, insertGitHubUser, type GitHubUser } from './mocks/github.ts'
 
 export * from './db-utils.ts'
 
@@ -142,10 +135,7 @@ export const { expect } = test
  */
 export async function waitFor<ReturnValue>(
 	cb: () => ReturnValue | Promise<ReturnValue>,
-	{
-		errorMessage,
-		timeout = 5000,
-	}: { errorMessage?: string; timeout?: number } = {},
+	{ errorMessage, timeout = 5000 }: { errorMessage?: string; timeout?: number } = {},
 ) {
 	const endTime = Date.now() + timeout
 	let lastError: unknown = new Error(errorMessage)

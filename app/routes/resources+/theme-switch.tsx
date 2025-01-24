@@ -1,17 +1,16 @@
-import { useForm, getFormProps } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
 import { data, redirect, useFetcher, useFetchers } from 'react-router'
 import { ServerOnly } from 'remix-utils/server-only'
 import { z } from 'zod'
+
 import { Icon } from '#app/components/ui/icon.tsx'
 import { useHints, useOptionalHints } from '#app/utils/client-hints.tsx'
-import {
-	useOptionalRequestInfo,
-	useRequestInfo,
-} from '#app/utils/request-info.ts'
-import { type Theme, setTheme } from '#app/utils/theme.server.ts'
+import { useOptionalRequestInfo, useRequestInfo } from '#app/utils/request-info.ts'
+import { setTheme, type Theme } from '#app/utils/theme.server.ts'
 import { type Route } from './+types/theme-switch.ts'
+
 const ThemeFormSchema = z.object({
 	theme: z.enum(['system', 'light', 'dark']),
 	// this is useful for progressive enhancement
@@ -38,11 +37,7 @@ export async function action({ request }: Route.ActionArgs) {
 	}
 }
 
-export function ThemeSwitch({
-	userPreference,
-}: {
-	userPreference?: Theme | null
-}) {
+export function ThemeSwitch({ userPreference }: { userPreference?: Theme | null }) {
 	const fetcher = useFetcher<typeof action>()
 	const requestInfo = useRequestInfo()
 
@@ -53,8 +48,7 @@ export function ThemeSwitch({
 
 	const optimisticMode = useOptimisticThemeMode()
 	const mode = optimisticMode ?? userPreference ?? 'system'
-	const nextMode =
-		mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system'
+	const nextMode = mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system'
 	const modeLabel = {
 		light: (
 			<Icon name="sun">
@@ -74,22 +68,13 @@ export function ThemeSwitch({
 	}
 
 	return (
-		<fetcher.Form
-			method="POST"
-			{...getFormProps(form)}
-			action="/resources/theme-switch"
-		>
+		<fetcher.Form method="POST" {...getFormProps(form)} action="/resources/theme-switch">
 			<ServerOnly>
-				{() => (
-					<input type="hidden" name="redirectTo" value={requestInfo.path} />
-				)}
+				{() => <input type="hidden" name="redirectTo" value={requestInfo.path} />}
 			</ServerOnly>
 			<input type="hidden" name="theme" value={nextMode} />
 			<div className="flex gap-2">
-				<button
-					type="submit"
-					className="flex h-8 w-8 cursor-pointer items-center justify-center"
-				>
+				<button type="submit" className="flex h-8 w-8 cursor-pointer items-center justify-center">
 					{modeLabel[mode]}
 				</button>
 			</div>
@@ -103,9 +88,7 @@ export function ThemeSwitch({
  */
 export function useOptimisticThemeMode() {
 	const fetchers = useFetchers()
-	const themeFetcher = fetchers.find(
-		(f) => f.formAction === '/resources/theme-switch',
-	)
+	const themeFetcher = fetchers.find((f) => f.formAction === '/resources/theme-switch')
 
 	if (themeFetcher && themeFetcher.formData) {
 		const submission = parseWithZod(themeFetcher.formData, {

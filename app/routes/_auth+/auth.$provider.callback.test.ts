@@ -2,6 +2,7 @@ import { invariant } from '@epic-web/invariant'
 import { faker } from '@faker-js/faker'
 import { http } from 'msw'
 import { afterEach, expect, test } from 'vitest'
+
 import { twoFAVerificationType } from '#app/routes/settings+/profile.two-factor.tsx'
 import { getSessionExpirationDate, sessionKey } from '#app/utils/auth.server.ts'
 import { connectionSessionStorage } from '#app/utils/connections.server.ts'
@@ -10,7 +11,7 @@ import { prisma } from '#app/utils/db.server.ts'
 import { authSessionStorage } from '#app/utils/session.server.ts'
 import { generateTOTP } from '#app/utils/totp.server.ts'
 import { createUser } from '#tests/db-utils.ts'
-import { insertGitHubUser, deleteGitHubUsers } from '#tests/mocks/github.ts'
+import { deleteGitHubUsers, insertGitHubUser } from '#tests/mocks/github.ts'
 import { server } from '#tests/mocks/index.ts'
 import { consoleError } from '#tests/setup/setup-test-env.ts'
 import { BASE_URL, convertSetCookieToCookie } from '#tests/utils.ts'
@@ -25,9 +26,7 @@ afterEach(async () => {
 
 test('a new user goes to onboarding', async () => {
 	const request = await setupRequest()
-	const response = await loader({ request, params: PARAMS, context: {} }).catch(
-		(e) => e,
-	)
+	const response = await loader({ request, params: PARAMS, context: {} }).catch((e) => e)
 	expect(response).toHaveRedirect('/onboarding/github')
 })
 
@@ -39,9 +38,7 @@ test('when auth fails, send the user to login with a toast', async () => {
 		}),
 	)
 	const request = await setupRequest()
-	const response = await loader({ request, params: PARAMS, context: {} }).catch(
-		(e) => e,
-	)
+	const response = await loader({ request, params: PARAMS, context: {} }).catch((e) => e)
 	invariant(response instanceof Response, 'response should be a Response')
 	expect(response).toHaveRedirect('/login')
 	await expect(response).toSendToast(
@@ -76,10 +73,7 @@ test('when a user is logged in, it creates the connection', async () => {
 			providerId: githubUser.profile.id.toString(),
 		},
 	})
-	expect(
-		connection,
-		'the connection was not created in the database',
-	).toBeTruthy()
+	expect(connection, 'the connection was not created in the database').toBeTruthy()
 })
 
 test(`when a user is logged in and has already connected, it doesn't do anything and just redirects the user back to the connections page`, async () => {
@@ -129,10 +123,7 @@ test('when a user exists with the same email, create connection and make session
 			providerId: githubUser.profile.id.toString(),
 		},
 	})
-	expect(
-		connection,
-		'the connection was not created in the database',
-	).toBeTruthy()
+	expect(connection, 'the connection was not created in the database').toBeTruthy()
 
 	await expect(response).toHaveSessionForUser(userId)
 })
@@ -160,9 +151,7 @@ test('gives an error if the account is already connected to another user', async
 	await expect(response).toSendToast(
 		expect.objectContaining({
 			title: 'Already Connected',
-			description: expect.stringContaining(
-				'already connected to another account',
-			),
+			description: expect.stringContaining('already connected to another account'),
 		}),
 	)
 })
@@ -223,8 +212,7 @@ async function setupRequest({
 	connectionSession.set('oauth2:state', state)
 	const authSession = await authSessionStorage.getSession()
 	if (sessionId) authSession.set(sessionKey, sessionId)
-	const setSessionCookieHeader =
-		await authSessionStorage.commitSession(authSession)
+	const setSessionCookieHeader = await authSessionStorage.commitSession(authSession)
 	const setConnectionSessionCookieHeader =
 		await connectionSessionStorage.commitSession(connectionSession)
 	const request = new Request(url.toString(), {

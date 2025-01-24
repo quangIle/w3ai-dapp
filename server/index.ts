@@ -72,10 +72,7 @@ if (viteDevServer) {
 	app.use(viteDevServer.middlewares)
 } else {
 	// Remix fingerprints its assets so we can cache forever.
-	app.use(
-		'/assets',
-		express.static('build/client/assets', { immutable: true, maxAge: '1y' }),
-	)
+	app.use('/assets', express.static('build/client/assets', { immutable: true, maxAge: '1y' }))
 
 	// Everything else (like favicon.ico) is cached for an hour. You may want to be
 	// more aggressive with this caching.
@@ -140,8 +137,7 @@ app.use(
 // When running tests or running in development, we want to effectively disable
 // rate limiting because playwright tests are very fast and we don't want to
 // have to wait for the rate limit to reset between tests.
-const maxMultiple =
-	!IS_PROD || process.env.PLAYWRIGHT_TEST_BASE_URL ? 10_000 : 1
+const maxMultiple = !IS_PROD || process.env.PLAYWRIGHT_TEST_BASE_URL ? 10_000 : 1
 const rateLimitDefault = {
 	windowMs: 60 * 1000,
 	limit: 1000 * maxMultiple,
@@ -252,9 +248,7 @@ if (!portAvailable && !IS_DEV) {
 const server = app.listen(portToUse, () => {
 	if (!portAvailable) {
 		console.warn(
-			chalk.yellow(
-				`⚠️  Port ${desiredPort} is not available, using ${portToUse} instead.`,
-			),
+			chalk.yellow(`⚠️  Port ${desiredPort} is not available, using ${portToUse} instead.`),
 		)
 	}
 	console.log(`🚀  We have liftoff!`)

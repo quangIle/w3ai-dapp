@@ -1,14 +1,15 @@
 import { useRef } from 'react'
-import { Link, Form } from 'react-router'
+import { Form, Link } from 'react-router'
+
 import { getUserImgSrc } from '#app/utils/misc.tsx'
 import { useUser } from '#app/utils/user.ts'
 import { Button } from './ui/button'
 import {
 	DropdownMenu,
-	DropdownMenuTrigger,
-	DropdownMenuPortal,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuPortal,
+	DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import { Icon } from './ui/icon'
 
@@ -30,9 +31,7 @@ export function UserDropdown() {
 							alt={user.name ?? user.username}
 							src={getUserImgSrc(user.image?.id)}
 						/>
-						<span className="text-body-sm font-bold">
-							{user.name ?? user.username}
-						</span>
+						<span className="text-body-sm font-bold">{user.name ?? user.username}</span>
 					</Link>
 				</Button>
 			</DropdownMenuTrigger>

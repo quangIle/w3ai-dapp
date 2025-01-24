@@ -1,19 +1,20 @@
 import fs from 'node:fs'
 import {
 	cachified as baseCachified,
-	verboseReporter,
 	mergeReporters,
+	totalTtl,
+	verboseReporter,
+	type Cache,
 	type CacheEntry,
 	type Cache as CachifiedCache,
 	type CachifiedOptions,
-	type Cache,
-	totalTtl,
 	type CreateReporter,
 } from '@epic-web/cachified'
 import { remember } from '@epic-web/remember'
 import Database from 'better-sqlite3'
 import { LRUCache } from 'lru-cache'
 import { z } from 'zod'
+
 import { updatePrimaryCacheValue } from '#app/routes/admin+/cache_.sqlite.server.ts'
 import { getInstanceInfo, getInstanceInfoSync } from './litefs.server.ts'
 import { cachifiedTimingReporter, type Timings } from './timing.server.ts'
@@ -49,10 +50,7 @@ function createDatabase(tryAgain = true): Database.Database {
 	return db
 }
 
-const lru = remember(
-	'lru-cache',
-	() => new LRUCache<string, CacheEntry<unknown>>({ max: 5000 }),
-)
+const lru = remember('lru-cache', () => new LRUCache<string, CacheEntry<unknown>>({ max: 5000 }))
 
 export const lruCache = {
 	name: 'app-memory-cache',
@@ -84,9 +82,7 @@ const cacheQueryResultSchema = z.object({
 export const cache: CachifiedCache = {
 	name: 'SQLite cache',
 	get(key) {
-		const result = cacheDb
-			.prepare('SELECT value, metadata FROM cache WHERE key = ?')
-			.get(key)
+		const result = cacheDb.prepare('SELECT value, metadata FROM cache WHERE key = ?').get(key)
 		const parseResult = cacheQueryResultSchema.safeParse(result)
 		if (!parseResult.success) return null
 
@@ -175,8 +171,5 @@ export async function cachified<Value>(
 	},
 	reporter: CreateReporter<Value> = verboseReporter<Value>(),
 ): Promise<Value> {
-	return baseCachified(
-		options,
-		mergeReporters(cachifiedTimingReporter(timings), reporter),
-	)
+	return baseCachified(options, mergeReporters(cachifiedTimingReporter(timings), reporter))
 }

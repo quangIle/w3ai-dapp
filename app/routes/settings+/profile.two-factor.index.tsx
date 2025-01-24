@@ -1,5 +1,6 @@
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
-import { redirect, Link, useFetcher } from 'react-router'
+import { Link, redirect, useFetcher } from 'react-router'
+
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
@@ -48,9 +49,7 @@ export default function TwoFactorRoute({ loaderData }: Route.ComponentProps) {
 			{loaderData.is2FAEnabled ? (
 				<>
 					<p className="text-lg">
-						<Icon name="check">
-							You have enabled two-factor authentication.
-						</Icon>
+						<Icon name="check">You have enabled two-factor authentication.</Icon>
 					</p>
 					<Link to="disable">
 						<Icon name="lock-open-1">Disable 2FA</Icon>
@@ -59,14 +58,11 @@ export default function TwoFactorRoute({ loaderData }: Route.ComponentProps) {
 			) : (
 				<>
 					<p>
-						<Icon name="lock-open-1">
-							You have not enabled two-factor authentication yet.
-						</Icon>
+						<Icon name="lock-open-1">You have not enabled two-factor authentication yet.</Icon>
 					</p>
 					<p className="text-sm">
-						Two factor authentication adds an extra layer of security to your
-						account. You will need to enter a code from an authenticator app
-						like{' '}
+						Two factor authentication adds an extra layer of security to your account. You will need
+						to enter a code from an authenticator app like{' '}
 						<a className="underline" href="https://1password.com/">
 							1Password
 						</a>{' '}

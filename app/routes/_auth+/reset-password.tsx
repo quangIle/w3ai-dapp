@@ -1,7 +1,8 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
-import { data, redirect, Form } from 'react-router'
+import { data, Form, redirect } from 'react-router'
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
@@ -21,12 +22,8 @@ const ResetPasswordSchema = PasswordAndConfirmPasswordSchema
 
 async function requireResetPasswordUsername(request: Request) {
 	await requireAnonymous(request)
-	const verifySession = await verifySessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
-	const resetPasswordUsername = verifySession.get(
-		resetPasswordUsernameSessionKey,
-	)
+	const verifySession = await verifySessionStorage.getSession(request.headers.get('cookie'))
+	const resetPasswordUsername = verifySession.get(resetPasswordUsernameSessionKey)
 	if (typeof resetPasswordUsername !== 'string' || !resetPasswordUsername) {
 		throw redirect('/login')
 	}
@@ -65,10 +62,7 @@ export const meta: Route.MetaFunction = () => {
 	return [{ title: 'Reset Password | Epic Notes' }]
 }
 
-export default function ResetPasswordPage({
-	loaderData,
-	actionData,
-}: Route.ComponentProps) {
+export default function ResetPasswordPage({ loaderData, actionData }: Route.ComponentProps) {
 	const isPending = useIsPending()
 
 	const [form, fields] = useForm({
@@ -86,8 +80,7 @@ export default function ResetPasswordPage({
 			<div className="text-center">
 				<h1 className="text-h1">Password Reset</h1>
 				<p className="mt-3 text-body-md text-muted-foreground">
-					Hi, {loaderData.resetPasswordUsername}. No worries. It happens all the
-					time.
+					Hi, {loaderData.resetPasswordUsername}. No worries. It happens all the time.
 				</p>
 			</div>
 			<div className="mx-auto mt-16 min-w-full max-w-sm sm:min-w-[368px]">

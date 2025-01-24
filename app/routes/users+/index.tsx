@@ -1,5 +1,6 @@
-import { data, redirect, Link } from 'react-router'
+import { data, Link, redirect } from 'react-router'
 import { z } from 'zod'
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList } from '#app/components/forms.tsx'
 import { SearchBar } from '#app/components/search-bar.tsx'
@@ -68,10 +69,9 @@ export default function UsersRoute({ loaderData }: Route.ComponentProps) {
 				{loaderData.status === 'idle' ? (
 					loaderData.users.length ? (
 						<ul
-							className={cn(
-								'flex w-full flex-wrap items-center justify-center gap-4 delay-200',
-								{ 'opacity-50': isPending },
-							)}
+							className={cn('flex w-full flex-wrap items-center justify-center gap-4 delay-200', {
+								'opacity-50': isPending,
+							})}
 						>
 							{loaderData.users.map((user) => (
 								<li key={user.id}>

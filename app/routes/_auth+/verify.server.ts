@@ -2,6 +2,7 @@ import { type Submission } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { data } from 'react-router'
 import { z } from 'zod'
+
 import { handleVerification as handleChangeEmailVerification } from '#app/routes/settings+/profile.change-email.server.tsx'
 import { twoFAVerificationType } from '#app/routes/settings+/profile.two-factor.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
@@ -17,21 +18,17 @@ import {
 import { handleVerification as handleOnboardingVerification } from './onboarding.server.ts'
 import { handleVerification as handleResetPasswordVerification } from './reset-password.server.ts'
 import {
-	VerifySchema,
 	codeQueryParam,
 	redirectToQueryParam,
 	targetQueryParam,
 	typeQueryParam,
+	VerifySchema,
 	type VerificationTypes,
 } from './verify.tsx'
 
 export type VerifyFunctionArgs = {
 	request: Request
-	submission: Submission<
-		z.input<typeof VerifySchema>,
-		string[],
-		z.output<typeof VerifySchema>
-	>
+	submission: Submission<z.input<typeof VerifySchema>, string[], z.output<typeof VerifySchema>>
 	body: FormData | URLSearchParams
 }
 
@@ -137,10 +134,7 @@ export async function isCodeValid({
 	return true
 }
 
-export async function validateRequest(
-	request: Request,
-	body: URLSearchParams | FormData,
-) {
+export async function validateRequest(request: Request, body: URLSearchParams | FormData) {
 	const submission = await parseWithZod(body, {
 		schema: VerifySchema.superRefine(async (data, ctx) => {
 			const codeIsValid = await isCodeValid({

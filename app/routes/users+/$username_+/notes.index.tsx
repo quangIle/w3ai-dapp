@@ -10,9 +10,9 @@ export default function NotesIndexRoute() {
 }
 
 export const meta: Route.MetaFunction = ({ params, matches }) => {
-	const notesMatch = matches.find(
-		(m) => m?.id === 'routes/users+/$username_+/notes',
-	) as { data: notesInfo['loaderData'] }
+	const notesMatch = matches.find((m) => m?.id === 'routes/users+/$username_+/notes') as {
+		data: notesInfo['loaderData']
+	}
 
 	const displayName = notesMatch?.data?.owner.name ?? params.username
 	const noteCount = notesMatch?.data?.owner.notes.length ?? 0

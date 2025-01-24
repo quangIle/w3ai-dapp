@@ -6,6 +6,7 @@
 // message for them than the Remix and/or browser default.
 
 import { Link, useLocation } from 'react-router'
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 
@@ -32,9 +33,7 @@ export function ErrorBoundary() {
 					<div className="flex flex-col gap-6">
 						<div className="flex flex-col gap-3">
 							<h1>We can't find this page:</h1>
-							<pre className="whitespace-pre-wrap break-all text-body-lg">
-								{location.pathname}
-							</pre>
+							<pre className="whitespace-pre-wrap break-all text-body-lg">{location.pathname}</pre>
 						</div>
 						<Link to="/" className="text-body-md underline">
 							<Icon name="arrow-left">Back to home</Icon>

@@ -1,6 +1,7 @@
 import { invariant } from '@epic-web/invariant'
 import * as E from '@react-email/components'
 import { data } from 'react-router'
+
 import {
 	requireRecentVerification,
 	type VerifyFunctionArgs,
@@ -11,19 +12,11 @@ import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { newEmailAddressSessionKey } from './profile.change-email'
 
-export async function handleVerification({
-	request,
-	submission,
-}: VerifyFunctionArgs) {
+export async function handleVerification({ request, submission }: VerifyFunctionArgs) {
 	await requireRecentVerification(request)
-	invariant(
-		submission.status === 'success',
-		'Submission should be successful by now',
-	)
+	invariant(submission.status === 'success', 'Submission should be successful by now')
 
-	const verifySession = await verifySessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
+	const verifySession = await verifySessionStorage.getSession(request.headers.get('cookie'))
 	const newEmail = verifySession.get(newEmailAddressSessionKey)
 	if (!newEmail) {
 		return data(
@@ -68,13 +61,7 @@ export async function handleVerification({
 	)
 }
 
-export function EmailChangeEmail({
-	verifyUrl,
-	otp,
-}: {
-	verifyUrl: string
-	otp: string
-}) {
+export function EmailChangeEmail({ verifyUrl, otp }: { verifyUrl: string; otp: string }) {
 	return (
 		<E.Html lang="en" dir="ltr">
 			<E.Container>
@@ -104,15 +91,13 @@ function EmailChangeNoticeEmail({ userId }: { userId: string }) {
 				</h1>
 				<p>
 					<E.Text>
-						We're writing to let you know that your Epic Notes email has been
-						changed.
+						We're writing to let you know that your Epic Notes email has been changed.
 					</E.Text>
 				</p>
 				<p>
 					<E.Text>
-						If you changed your email address, then you can safely ignore this.
-						But if you did not change your email address, then please contact
-						support immediately.
+						If you changed your email address, then you can safely ignore this. But if you did not
+						change your email address, then please contact support immediately.
 					</E.Text>
 				</p>
 				<p>

@@ -1,15 +1,13 @@
 import { invariant } from '@epic-web/invariant'
 import { data, redirect } from 'react-router'
+
 import { prisma } from '#app/utils/db.server.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { resetPasswordUsernameSessionKey } from './reset-password.tsx'
 import { type VerifyFunctionArgs } from './verify.server.ts'
 
 export async function handleVerification({ submission }: VerifyFunctionArgs) {
-	invariant(
-		submission.status === 'success',
-		'Submission should be successful by now',
-	)
+	invariant(submission.status === 'success', 'Submission should be successful by now')
 	const target = submission.value.target
 	const user = await prisma.user.findFirst({
 		where: { OR: [{ email: target }, { username: target }] },

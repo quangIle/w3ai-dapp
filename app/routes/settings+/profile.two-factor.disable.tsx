@@ -1,5 +1,6 @@
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import { useFetcher } from 'react-router'
+
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireRecentVerification } from '#app/routes/_auth+/verify.server.ts'
@@ -41,8 +42,8 @@ export default function TwoFactorDisableRoute() {
 		<div className="mx-auto max-w-sm">
 			<disable2FAFetcher.Form method="POST">
 				<p>
-					Disabling two factor authentication is not recommended. However, if
-					you would like to do so, click here:
+					Disabling two factor authentication is not recommended. However, if you would like to do
+					so, click here:
 				</p>
 				<StatusButton
 					variant="destructive"

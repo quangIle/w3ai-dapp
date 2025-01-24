@@ -11,6 +11,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useState } from 'react'
 import { Form } from 'react-router'
 import { z } from 'zod'
+
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { floatingToolbarClassName } from '#app/components/floating-toolbar.tsx'
 import { ErrorList, Field, TextareaField } from '#app/components/forms.tsx'
@@ -111,10 +112,7 @@ export function NoteEditor({
 								{imageList.map((image, index) => {
 									console.log('image.key', image.key)
 									return (
-										<li
-											key={image.key}
-											className="relative border-b-2 border-muted-foreground"
-										>
+										<li key={image.key} className="relative border-b-2 border-muted-foreground">
 											<button
 												className="absolute right-0 top-0 text-foreground-destructive"
 												{...form.remove.getButtonProps({
@@ -125,9 +123,7 @@ export function NoteEditor({
 												<span aria-hidden>
 													<Icon name="cross-1" />
 												</span>{' '}
-												<span className="sr-only">
-													Remove image {index + 1}
-												</span>
+												<span className="sr-only">Remove image {index + 1}</span>
 											</button>
 											<ImageChooser meta={image} />
 										</li>
@@ -135,10 +131,7 @@ export function NoteEditor({
 								})}
 							</ul>
 						</div>
-						<Button
-							className="mt-3"
-							{...form.insert.getButtonProps({ name: fields.images.name })}
-						>
+						<Button className="mt-3" {...form.insert.getButtonProps({ name: fields.images.name })}>
 							<span aria-hidden>
 								<Icon name="plus">Image</Icon>
 							</span>{' '}
@@ -181,8 +174,7 @@ function ImageChooser({ meta }: { meta: FieldMetadata<ImageFieldset> }) {
 						<label
 							htmlFor={fields.file.id}
 							className={cn('group absolute h-32 w-32 rounded-lg', {
-								'bg-accent opacity-40 focus-within:opacity-100 hover:opacity-100':
-									!previewImage,
+								'bg-accent opacity-40 focus-within:opacity-100 hover:opacity-100': !previewImage,
 								'cursor-pointer focus-within:ring-2': !existingImage,
 							})}
 						>
@@ -204,9 +196,7 @@ function ImageChooser({ meta }: { meta: FieldMetadata<ImageFieldset> }) {
 									<Icon name="plus" />
 								</div>
 							)}
-							{existingImage ? (
-								<input {...getInputProps(fields.id, { type: 'hidden' })} />
-							) : null}
+							{existingImage ? <input {...getInputProps(fields.id, { type: 'hidden' })} /> : null}
 							<input
 								aria-label="Image"
 								className="absolute left-0 top-0 z-0 h-32 w-32 cursor-pointer opacity-0"
@@ -239,10 +229,7 @@ function ImageChooser({ meta }: { meta: FieldMetadata<ImageFieldset> }) {
 						{...getTextareaProps(fields.altText)}
 					/>
 					<div className="min-h-[32px] px-4 pb-3 pt-1">
-						<ErrorList
-							id={fields.altText.errorId}
-							errors={fields.altText.errors}
-						/>
+						<ErrorList id={fields.altText.errorId} errors={fields.altText.errors} />
 					</div>
 				</div>
 			</div>
@@ -257,9 +244,7 @@ export function ErrorBoundary() {
 	return (
 		<GeneralErrorBoundary
 			statusHandlers={{
-				404: ({ params }) => (
-					<p>No note with the id "{params.noteId}" exists</p>
-				),
+				404: ({ params }) => <p>No note with the id "{params.noteId}" exists</p>,
 			}}
 		/>
 	)
