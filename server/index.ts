@@ -219,7 +219,7 @@ if (!ALLOW_INDEXING) {
 app.all(
 	'*',
 	createRequestHandler({
-		getLoadContext: (_: any, res: any) => ({
+		getLoadContext: (_, res) => ({
 			cspNonce: res.locals.cspNonce,
 			serverBuild: getBuild(),
 		}),
@@ -284,3 +284,20 @@ closeWithGrace(async ({ err }) => {
 		}
 	}
 })
+
+// https://reactrouter.com/upgrading/remix#9-update-types-for-apploadcontext
+declare module 'react-router' {
+	interface AppLoadContext {
+		cspNonce: string
+		serverBuild: ReturnType<typeof getBuild>
+	}
+}
+
+// https://stackoverflow.com/a/75546771
+declare global {
+	namespace Express {
+		interface Locals {
+			cspNonce: string
+		}
+	}
+}

@@ -37,7 +37,7 @@ export default async function handleRequest(...args: DocRequestArgs) {
 
 	const callbackName = isbot(request.headers.get('user-agent')) ? 'onAllReady' : 'onShellReady'
 
-	const nonce = loadContext.cspNonce?.toString() ?? ''
+	const nonce = loadContext.cspNonce
 	return new Promise(async (resolve, reject) => {
 		let didError = false
 		// NOTE: this timing will only include things that are rendered in the shell
