@@ -7,35 +7,36 @@ import {
 	Scripts,
 	ScrollRestoration,
 	useLoaderData,
-	useMatches,
 } from 'react-router'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
+import { useConnect } from 'wagmi'
+import { metaMask } from 'wagmi/connectors'
 
-import { type Route } from './+types/root.ts'
+import { type Route } from './+types/root'
 import appleTouchIconAssetUrl from './assets/favicons/apple-touch-icon.png'
 import faviconAssetUrl from './assets/favicons/favicon.svg'
 import { GeneralErrorBoundary } from './components/error-boundary'
 import { EpicProgress } from './components/progress-bar'
-import { SearchBar } from './components/search-bar'
 import { useToast } from './components/toaster'
 import { Button } from './components/ui/button'
 import { href as iconsHref } from './components/ui/icon'
 import { EpicToaster } from './components/ui/sonner'
 import { UserDropdown } from './components/user-dropdown'
+import { WagmiProvider } from './components/wagmi-provider'
 import { ThemeSwitch, useOptionalTheme, useTheme } from './routes/resources+/theme-switch'
 import tailwindStyleSheetUrl from './styles/tailwind.css?url'
-import { getUserId, logout } from './utils/auth.server.ts'
+import { getUserId, logout } from './utils/auth.server'
 import { ClientHintCheck, getHints } from './utils/client-hints'
-import { prisma } from './utils/db.server.ts'
-import { getEnv } from './utils/env.server.ts'
-import { pipeHeaders } from './utils/headers.server.ts'
-import { honeypot } from './utils/honeypot.server.ts'
+import { prisma } from './utils/db.server'
+import { getEnv } from './utils/env.server'
+import { pipeHeaders } from './utils/headers.server'
+import { honeypot } from './utils/honeypot.server'
 import { combineHeaders, getDomainUrl } from './utils/misc'
-import { useNonce } from './utils/nonce-provider.ts'
-import { getTheme, type Theme } from './utils/theme.server.ts'
-import { makeTimings, time } from './utils/timing.server.ts'
-import { getToast } from './utils/toast.server.ts'
-import { useOptionalUser } from './utils/user.ts'
+import { useNonce } from './utils/nonce-provider'
+import { getTheme, type Theme } from './utils/theme.server'
+import { makeTimings, time } from './utils/timing.server'
+import { getToast } from './utils/toast.server'
+import { useOptionalUser } from './utils/user'
 
 export const links: Route.LinksFunction = () => {
 	return [
@@ -52,9 +53,9 @@ export const links: Route.LinksFunction = () => {
 			rel: 'manifest',
 			href: '/site.webmanifest',
 			crossOrigin: 'use-credentials',
-		} as const, // necessary to make typescript happy
+		},
 		{ rel: 'stylesheet', href: tailwindStyleSheetUrl },
-	].filter(Boolean)
+	]
 }
 
 export const meta: Route.MetaFunction = ({ data }) => {
@@ -104,6 +105,11 @@ export async function loader({ request }: Route.LoaderArgs) {
 	const { toast, headers: toastHeaders } = await getToast(request)
 	const honeyProps = await honeypot.getInputProps()
 
+	const cookie = request.headers.get('Cookie')
+
+	const wagmiKey = `wagmi.store`
+	const wagmiInitial = cookie?.split('; ').find((x) => x.startsWith(`${wagmiKey}=`))
+
 	return data(
 		{
 			user,
@@ -118,6 +124,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 			ENV: getEnv(),
 			toast,
 			honeyProps,
+			wagmiInitial,
 		},
 		{
 			headers: combineHeaders({ 'Server-Timing': timings.toString() }, toastHeaders),
@@ -150,7 +157,7 @@ function Document({
 				{allowIndexing ? null : <meta name="robots" content="noindex, nofollow" />}
 				<Links />
 			</head>
-			<body className="bg-background text-foreground">
+			<body className="h-full bg-background text-foreground">
 				{children}
 				<script
 					nonce={nonce}
@@ -181,18 +188,15 @@ function App() {
 	const data = useLoaderData<typeof loader>()
 	const user = useOptionalUser()
 	const theme = useTheme()
-	const matches = useMatches()
-	const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index')
-	const searchBar = isOnSearchPage ? null : <SearchBar status="idle" />
+
 	useToast(data.toast)
 
 	return (
 		<>
-			<div className="flex min-h-screen flex-col justify-between">
+			<div className="flex h-full flex-col">
 				<header className="container py-6">
 					<nav className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap md:gap-8">
 						<Logo />
-						<div className="ml-auto hidden max-w-sm flex-1 sm:block">{searchBar}</div>
 						<div className="flex items-center gap-10">
 							{user ? (
 								<UserDropdown />
@@ -202,14 +206,9 @@ function App() {
 								</Button>
 							)}
 						</div>
-						<div className="block w-full sm:hidden">{searchBar}</div>
 					</nav>
 				</header>
-
-				<div className="flex-1">
-					<Outlet />
-				</div>
-
+				<Outlet />
 				<div className="container flex justify-between pb-5">
 					<Logo />
 					<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
@@ -231,11 +230,14 @@ function Logo() {
 }
 
 function AppWithProviders() {
-	const data = useLoaderData<typeof loader>()
+	const { honeyProps, wagmiInitial } = useLoaderData<typeof loader>()
+
 	return (
-		<HoneypotProvider {...data.honeyProps}>
-			<App />
-		</HoneypotProvider>
+		<WagmiProvider initialCookie={wagmiInitial}>
+			<HoneypotProvider {...honeyProps}>
+				<App />
+			</HoneypotProvider>
+		</WagmiProvider>
 	)
 }
 

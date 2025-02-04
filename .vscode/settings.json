@@ -13,5 +13,6 @@
 	},
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"typescript.preferences.importModuleSpecifierEnding": "minimal",
-	"javascript.preferences.importModuleSpecifierEnding": "minimal"
+	"javascript.preferences.importModuleSpecifierEnding": "minimal",
+	"cSpell.words": ["Prefs", "sonner", "viem", "VITE"]
 }
